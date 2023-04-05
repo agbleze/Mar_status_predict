@@ -60,12 +60,12 @@ df_g7sec1['s1q9'].count()
 #%%
 
 df_sel = df_g7sec1[['phid', 'hid', 'clust', 'nh', 'pid', 's1q2', 's1q5y', 
-                     's1q14', 's1q18', 's1q22', 's1q10'
+                     's1q14', 's1q18', 's1q22', 's1q10', 's1q6'
                 ]]
 
 #%%
 
-g7sec2[[]]
+df_sel_sec2 = g7sec2[['phid', 'clust', 'nh', 'pid','s2aq1','s2aq1b']]
 
 
 #%%
@@ -81,6 +81,16 @@ g7sec2[[]]
 
 ## s1q10 What is (NAME’S) religious denomination?
 
+
+
+
+
+# %%
+
+data = df_sel.merge(right=g7sec7j, on='phid', how='outer').merge(right=df_sel_sec2, 
+                                                          how='outer',
+                                                          on='phid'
+                                                          )
 
 
 
