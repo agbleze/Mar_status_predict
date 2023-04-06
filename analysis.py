@@ -96,3 +96,62 @@ data = df_sel.merge(right=g7sec7j, on='phid', how='outer').merge(right=df_sel_se
 
 
 # %%
+data = data.rename(columns={'s7jq1': 'weight',
+                     's7jq0': 'measured_or_not',
+                     's7jq2': 'measure_mode',
+                     's7jq3': 'Height',
+                     'loc2':'urbrur',
+                     's1q22':'months_away_from_hse',
+                     's1q14':'father_in_hse',
+                     's2aq1b':'highest_edu',
+                     's1q2':'sex',
+                     's1q18': 'mother_in_hse',
+                     's1q5y': 'age_years',
+                     's1q10': 'religion',
+                     's2aq1': 'attend_school',
+                     's1q6': 'marital_status'
+                     }
+            ).copy()
+
+#%%
+
+data.info()
+
+#%%
+
+data.describe()
+
+#%%
+
+data_mar_only = data.dropna(subset='marital_status')
+
+#%%
+
+data_mar_only[['weight', 'Height', 'age_yrs']].info()
+
+
+#%%
+
+from sklearn.preprocessing import LabelEncoder
+
+#%%
+
+label_encoder = LabelEncoder()
+
+#%%
+
+data_mar_only['marital_status_encode'] = label_encoder.fit_transform(data_mar_only['marital_status'])
+
+
+#%%
+
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.model_selection import train_test_split
+
+#%%
+
+
+
+
+
+# %%
