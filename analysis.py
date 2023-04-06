@@ -150,8 +150,8 @@ from sklearn.model_selection import train_test_split
 
 #%%
 
+X = data_mar_only[['weight', 'Height', 'age_yrs']]
 
-
-
+y = data_mar_only['marital_status']
 
 # %%
