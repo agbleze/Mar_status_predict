@@ -145,13 +145,84 @@ data_mar_only['marital_status_encode'] = label_encoder.fit_transform(data_mar_on
 
 #%%
 
-from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier,BaggingClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import (accuracy_score,classification_report,
+                             roc_auc_score,precision_score,
+                             recall_score,roc_curve,
+                             balanced_accuracy_score
+                             )
+#from sklearn.
 
 #%%
 
 X = data_mar_only[['weight', 'Height', 'age_yrs']]
 
-y = data_mar_only['marital_status']
+y = data_mar_only[['marital_status_encode']]
 
 # %%
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2023, 
+                                                    stratify=y['marital_status_encode'],
+                                                    test_size=.3 #shuffle=True
+                                                    )
+
+#%%
+
+histgb = HistGradientBoostingClassifier(class_weight='balanced')
+
+
+#%%
+histgb.fit(X_train, y_train)
+
+#%%
+
+accuracy_score(y_true=y_train, y_pred=histgb.predict(X_train))
+
+#%% test accuracy
+
+accuracy_score(y_true=y_test, y_pred=histgb.predict(X_test))
+
+#%%
+
+from tpot import TPOTClassifier
+
+#%% initialize tpot with default parameters
+
+tpot_classifier = TPOTClassifier(verbosity=3, 
+                                 warm_start=True, 
+                                 max_time_mins=60,
+                                 use_dask=True,
+                                 n_jobs=-1
+                                 )
+
+# %% train the classifier
+
+tpot_classifier.fit(X_train, y_train)
+
+#%%
+
+tpot_classifier.pareto_front_fitted_pipelines_
+
+#%%
+
+tpot_classifier.evaluated_individuals_
+
+#%%
+
+tpot_classifier.fitted_pipeline_
+
+#%%
+
+accuracy_score(y_true=y_train, y_pred=tpot_classifier.predict(X_train))
+
+#%%
+accuracy_score(y_true=y_test, y_pred=tpot_classifier.predict(X_test))
+# %%
+
+
+
+
+
+
+
