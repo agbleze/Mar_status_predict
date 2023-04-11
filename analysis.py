@@ -218,7 +218,11 @@ accuracy_score(y_true=y_train, y_pred=tpot_classifier.predict(X_train))
 
 #%%
 accuracy_score(y_true=y_test, y_pred=tpot_classifier.predict(X_test))
-# %%
+
+# %% optimization techniques 
+
+
+
 
 
 
