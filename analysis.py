@@ -123,6 +123,10 @@ data.describe()
 
 #%%
 
+data[['sex']]
+
+#%%
+
 data_mar_only = data.dropna(subset='marital_status')
 
 #%%
