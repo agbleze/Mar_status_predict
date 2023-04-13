@@ -59,7 +59,8 @@ df_g7sec1['s1q9'].count()
 
 #%%
 
-df_sel = df_g7sec1[['phid', 'hid', 'clust', 'nh', 'pid', 's1q2', 's1q5y', 
+df_sel = df_g7sec1[['phid', 'hid', 'clust', 'nh', 'pid', #'s1q2', 
+                    's1q5y', 
                      's1q14', 's1q18', 's1q22', 's1q10', 's1q6'
                 ]]
 
@@ -137,6 +138,37 @@ data_mar_only = data.dropna(subset='marital_status')
 
 data_mar_only[['weight', 'Height', 'age_yrs']].info()
 
+#%%
+
+# TODO: 
+# SELECT all predictors for exploration
+# Undertake data visualization for target and predictors
+# undertake feature selection
+# identify possibility of feature engineering
+
+
+
+#%%
+"""
+# Introduction - Problem statement
+
+
+
+
+# Problem statement
+
+
+
+# Exploratory analysis
+
+
+
+
+
+"""
+
+
+
 
 #%%
 
@@ -149,6 +181,14 @@ label_encoder = LabelEncoder()
 #%%
 
 data_mar_only['marital_status_encode'] = label_encoder.fit_transform(data_mar_only['marital_status'])
+
+
+
+
+
+
+
+
 
 
 #%%
