@@ -150,7 +150,6 @@ data_mar_only[['weight', 'Height', 'age_yrs']].info()
 
 #%%
 """
-
 # Introduction - Problem statement
 
 DateRush Mate (hypothetical firm used to establish a business case for this data science project) aims to be one of the 
@@ -273,112 +272,81 @@ learning algorithm to use. Thus, the various variables are accessed based on tha
 
 #### Predictor / feature variables
 
-• s1q2: sex of individual
+• mother_in_hse: Categorical
 
-• s1q18:  'mother_in_hse'  <<  18 Does (NAME’S) mother live in this household?
+• religion: Categorical 
 
-• s1q10: 'religion'  <<  What is (NAME’S) religious denomination?
+• Height: Continuous quantitative 
 
-• s7jq3: 'Height'  <<  Height (cm) of household member.
+• father_in_hse: Categorical 
 
+• highest_edu: Categorical 
 
-• s1q14:  'father_in_hse'   <<   Does (NAME’S) father live in this household?
+• attend_school:  Categorical 
 
-• s2aq1b: 'highest_edu'   <<   What is the highest level of education (NAME) has attained?
+• weight:  Continuous Quantitative
 
-• 's2aq1': 'attend_school'  <<  Has (NAME) ever attended school?
+• months_away_from_hse: Discrete Quantitative
 
-• 's1q6': 'marital_status'  <<   What is (NAME’S) present marital status?
+• age_yrs: Discrete Quantitative
 
-• 's7jq1': 'weight'  <<   Weight (Kg) of household member
+• sex: Categorical 
 
-• age_yrs
-
-• sex
-
-
-By identifying the type of variable, appropriate visualization can be undertaken for different 
-variables during exploratory data analysis. The type of variable also influences the transformation techniques to 
-employ hence organized to reflect that.
-
-
-
-
-
-'s1q10': 'religion',
-                     's2aq1': 'attend_school',
-                     's1q6': 'marital_status'
-
-
-
-
-
-s1q22 Number of months away from houshold
-## s1q22 father live in household  <<  14 Does (NAME’S) father live in this household?
-## s1q1b educational level <<  What is the highest level of education (NAME) has attained?
-
-
-## s1q2 sex of individual
-## s1q18  Mother live in household  <<  18 Does (NAME’S) mother live in this household?
-
-## s1q5y Age in years
-
-## s1q10 What is (NAME’S) religious denomination?
-
-
-
-'s7jq1': 'weight',
-                     's7jq0': 'measured_or_not',
-                     's7jq2': 'measure_mode',
-                     's7jq3': 'Height',
-                     'loc2':'urbrur',
-                     's1q22':'months_away_from_hse',
-                     's1q14':'father_in_hse',
-                     's2aq1b':'highest_edu',
-                     #'s1q2':'sex',
-                     's1q18': 'mother_in_hse',
-                     's1q5y': 'age_years',
-                     's1q10': 'religion',
-                     's2aq1': 'attend_school',
-                     's1q6': 'marital_status'
-
-
-
-
-
-
-This was undertaken 
-
- 
- 
- 
- 
- 
- 
-
-
-
-
-
-is providing adequate information on matches when any of them requests for one 
-
-While openness 
-
-Machine Learnng 
-
-
-
-# Problem statement
-
+Exploratory data analysis is organized to reflect the data types of the various variables as follows.
 
 
 # Exploratory analysis
 
+Exploratory data analysis is undertaken to investigate some of the assumptions that some machine learning algorithms 
+require. Among others, the type of underlying distribution that a variable is from, the relationsip between the 
+various variables and possible data transformation are explored at this stage. The insights gained from such analysis 
+is important for undertaking feature selection.
 
 
+### Data analysis 
 
-
+Given the various features preselected to be explored for modelling are in different files, 
+there is the need to combine data from the various files. For this, a common variable in the files is 
+required and for this "phid" variable is used as follows. 
 """
+
+#%% import all modules
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import HistGradientBoostingClassifier,BaggingClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import (accuracy_score,classification_report,
+                             roc_auc_score,precision_score,
+                             recall_score,roc_curve,
+                             balanced_accuracy_score
+                             )
+
+
+#%%
+
+df_g7sec1 = pd.read_spss(path='g7sec1.sav')
+
+#%%
+
+health = pd.read_spss(path='g7sec3b_Health_Insurance.sav')
+
+#%%
+
+g7sec7 = pd.read_spss(path='g7sec7.sav')
+
+#%%
+
+g7sec7j = pd.read_spss(path='g7sec7j.sav')
+
+#%%
+
+g7sec2 = pd.read_spss(path='g7sec2.sav')
+
+
+
 
 
 
