@@ -163,8 +163,8 @@ so to start with. For this, intelligent tools are required for prediction.
 
 
 In providing such services, the most requested information by our users is to know the marital status of client. Given that 
-an platform user is not obliged to include their the marital status on the profile but have the option of asking their match 
-in person, many users leave-out such information yet consider know that of a partner important in deciding whether an in-person 
+a platform user is not obliged to include their the marital status on the profile but have the option of asking their match 
+in person, many users leave-out such information yet consider knowing that of a partner important in deciding whether an in-person 
 date or serious dating should be considered. Driven by solving problems that are most important and whose solutions are most 
 requested by users, predicting the marital status of users is designated as a high priority task for which a demonstration of 
 how to develop a working solution is provided in this post. 
