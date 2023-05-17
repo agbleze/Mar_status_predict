@@ -343,8 +343,8 @@ health = pd.read_spss(path='g7sec3b_Health_Insurance.sav')
 g7sec7 = pd.read_spss(path='g7sec7.sav')
 
 #%%
-
-g7sec7j = pd.read_spss(path='g7sec7j.sav')
+df_g7sec1 = pd.read_spss(path='g7sec1.sav')
+g7sec7j = pd.read_spss(path='g7sec7j.sav')  ###
 
 #%%
 
@@ -352,6 +352,14 @@ g7sec2 = pd.read_spss(path='g7sec2.sav')
 
 
 
+df_sel = df_g7sec1[['phid', 'hid', 'clust', 'nh', 'pid', #'s1q2', 
+                    's1q5y', 
+                     's1q14', 's1q18', 's1q22', 's1q10', 's1q6'
+                ]]
+
+#%%
+
+df_sel_sec2 = g7sec2[['phid', 'clust', 'nh', 'pid','s2aq1','s2aq1b']]
 
 
 
