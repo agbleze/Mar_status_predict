@@ -307,7 +307,7 @@ is important for undertaking feature selection.
 
 Given the various features preselected to be explored for modelling are in different files, 
 there is the need to combine data from the various files. For this, a common variable in the files is 
-required and for this "phid" variable is used as follows. 
+required and "phid" variable is used for that purpose. 
 
 ## Data Visualization: Relationship between variables
 
@@ -332,27 +332,18 @@ from sklearn.metrics import (accuracy_score,classification_report,
 
 #%%
 
-g7sec7 = pd.read_spss(path='g7sec7.sav')
+#g7sec7 = pd.read_spss(path='g7sec7.sav')
 
-#%%
+df_g7sec1 = pd.read_spss(path='g7sec1.sav')
 g7sec7j = pd.read_spss(path='g7sec7j.sav')  ###
-
-#%%
-
 g7sec2 = pd.read_spss(path='g7sec2.sav')
-
-
 
 df_sel = df_g7sec1[['phid', 'hid', 'clust', 'nh', 'pid', #'s1q2', 
                     's1q5y', 
                      's1q14', 's1q18', 's1q22', 's1q10', 's1q6'
                 ]]
 
-#%%
-
 df_sel_sec2 = g7sec2[['phid', 'clust', 'nh', 'pid','s2aq1','s2aq1b']]
-
-
 
 data = df_sel.merge(right=g7sec7j, on='phid', how='outer')
 
