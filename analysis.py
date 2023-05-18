@@ -376,6 +376,19 @@ data = data.rename(columns={'s7jq1': 'weight',
             ).copy()
 
 
+#%%
+
+""" 
+One of the factors that influences the kind of analysis that a variable can be subjected to is the 
+data type. Hence the data type of the various variables are determined as follows
+
+"""
+
+data.info()
+
+# From the above it is deduced that missing data is present in some of variables and their data types are identified.
+
+#%%
 """
 
 ###   Descriptive statistics 
@@ -384,8 +397,21 @@ Most descriptive statistics such mean, minimum, maximum among others, highlight 
 distribution of variables that are quantitative. Hence quantitative variables are selected for this 
 type of analysis as follows.
 
+"""
+#%%
+data[['age_years', 'Height', 'weight']].describe()
 
 """
+From the analysis, the mean gae is about 25 years. The high difference between the 75% percentile
+age (37) and maximum age (99) suggests that outliers is likely present and has to be treated. The 
+same deductions are made for height and weight. A number of ways can be used to handle outliers 
+when identified and this generally involves choosing an algorithm that is robust to it or imputing 
+it. 
+"""
+
+#### Missing data
+
+
 
 
 #%%
