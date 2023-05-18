@@ -332,18 +332,9 @@ from sklearn.metrics import (accuracy_score,classification_report,
 
 #%%
 
-df_g7sec1 = pd.read_spss(path='g7sec1.sav')
-
-#%%
-
-health = pd.read_spss(path='g7sec3b_Health_Insurance.sav')
-
-#%%
-
 g7sec7 = pd.read_spss(path='g7sec7.sav')
 
 #%%
-df_g7sec1 = pd.read_spss(path='g7sec1.sav')
 g7sec7j = pd.read_spss(path='g7sec7j.sav')  ###
 
 #%%
@@ -360,6 +351,38 @@ df_sel = df_g7sec1[['phid', 'hid', 'clust', 'nh', 'pid', #'s1q2',
 #%%
 
 df_sel_sec2 = g7sec2[['phid', 'clust', 'nh', 'pid','s2aq1','s2aq1b']]
+
+
+
+data = df_sel.merge(right=g7sec7j, on='phid', how='outer')
+
+
+data = data.merge(right=df_sel_sec2, 
+                  how='outer',
+                  on='phid'
+               )
+
+
+
+
+# %%
+data = data.rename(columns={'s7jq1': 'weight',
+                     's7jq0': 'measured_or_not',
+                     's7jq2': 'measure_mode',
+                     's7jq3': 'Height',
+                     'loc2':'urbrur',
+                     's1q22':'months_away_from_hse',
+                     's1q14':'father_in_hse',
+                     's2aq1b':'highest_edu',
+                     #'s1q2':'sex',
+                     's1q18': 'mother_in_hse',
+                     's1q5y': 'age_years',
+                     's1q10': 'religion',
+                     's2aq1': 'attend_school',
+                     's1q6': 'marital_status'
+                     }
+            ).copy()
+
 
 
 
