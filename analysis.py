@@ -307,7 +307,8 @@ is important for undertaking feature selection.
 
 Given the various features preselected to be explored for modelling are in different files, 
 there is the need to combine data from the various files. For this, a common variable in the files is 
-required and "phid" variable is used for that purpose. 
+required and "phid" variable is used for that purpose. Afterwards the variables are rename into something
+more understandable.
 
 ## Data Visualization: Relationship between variables
 
@@ -375,7 +376,16 @@ data = data.rename(columns={'s7jq1': 'weight',
             ).copy()
 
 
+"""
 
+###   Descriptive statistics 
+
+Most descriptive statistics such mean, minimum, maximum among others, highlight the range and 
+distribution of variables that are quantitative. Hence quantitative variables are selected for this 
+type of analysis as follows.
+
+
+"""
 
 
 #%%
