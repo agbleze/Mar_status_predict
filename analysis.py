@@ -294,6 +294,28 @@ learning algorithm to use. Thus, the various variables are accessed based on tha
 
 Exploratory data analysis is organized to reflect the data types of the various variables as follows.
 
+Before proceeding with it, one cannot resist addressing a frequently asked question concerning 
+when it should be undertaken. Yes, it is always the first stages but lets talk about the its focus.
+Very often the question is asked;
+
+Should the dataset be splitted before undertaking the exploratory analysis?
+
+Should exploratory analysis be undertaken on all the dataset or only the training dataset?
+
+Well, these two questions are driving at the same thing from the same angle.
+
+The answers are Yes and No with solid arguemnt for both so that it all truns down to be 
+where you see things from base on your situation. I will argue for each point to present 
+the views based on which you decide.
+
+
+Yes, the dataset should be splitted before exploratory analysis!
+Exploratory analysis should be based on only training data!
+
+
+
+
+
 
 # Exploratory analysis
 
@@ -361,7 +383,7 @@ data = data.merge(right=df_sel_sec2,
 data = data.rename(columns={'s7jq1': 'weight',
                      's7jq0': 'measured_or_not',
                      's7jq2': 'measure_mode',
-                     's7jq3': 'Height',
+                     's7jq3': 'height',
                      'loc2':'urbrur',
                      's1q22':'months_away_from_hse',
                      's1q14':'father_in_hse',
@@ -383,10 +405,65 @@ One of the factors that influences the kind of analysis that a variable can be s
 data type. Hence the data type of the various variables are determined as follows
 
 """
+data_selected = data[['father_in_hse', 'mother_in_hse', 'months_away_from_hse',
+                         'marital_status', 'sex', 'age_yrs', 'weight', 'Height', 
+                         'attend_school', 'highest_edu'
+                         ]]
 
-data.info()
+data_selected.info()
 
-# From the above it is deduced that missing data is present in some of variables and their data types are identified.
+""" 
+From the above the data types of various variables are identified and it is deduced 
+that missing data is present in some of variables. However, given that the whole analysis
+is based on the number of data points for target variable, only instances where 
+data is available for marital status will be considered and afterwards the presence of
+missing data will checked.
+
+"""
+
+#%%
+
+marital_status_df = data_selected.dropna(subset='marital_status')
+
+marital_status_df.info()
+
+
+""" 
+A key insight gained from the data after reducing it to only observations where marital 
+status is recorded is that most of the variables have missing data 
+hence have to be handle as part of the data preparation process.
+
+The decision on how to handle missing data is equally influence by the percentage 
+of data that is missing given that imputing a high percentage of missing data introduces 
+a high amount of "artificial data" that can change the actual underlying distribution of 
+the phenomenon being studied. The percentage of data missing for each variable is 
+computed as follows.
+
+"""
+#%%
+
+# Total missing data as a percentage of all data points is estimated as follows
+def get_missing_data_percent(data: pd.DataFrame, variable: str):
+    total_missing = data[variable].isnull().sum()
+    total_data = data.shape[0]
+    percent_missing = (total_missing / total_data) * 100
+    print(f'Percentage of data missing in {variable}: {round(percent_missing, 5)}%')
+
+#%% # implement function for percentage of missing data per variable
+for variable_name in marital_status_df.columns:
+    get_missing_data_percent(data=marital_status_df, variable=variable_name)
+    
+ 
+#%% 
+"""  
+From the analysis of missing data, two variables have 20.56% of data missing. 
+This is quite a high percentage of missing data to impute even though only a few 
+features are facing this challenge. Appropriate method will be decided on handling 
+and imputing missing data after further exploratory analysis. 
+ 
+""" 
+ 
+    
 
 #%%
 """
@@ -411,7 +488,19 @@ it.
 
 #### Missing data
 
+""" 
+A key insight gained from this is the presence of missing data for last_review and 
+reviews_per_month
+hence have to be handle as part of the data preparation process.
 
+The decision on how to handle missing data is equally influence by the percentage 
+of data that is missing given that imputing a high percentage of missing data introduces 
+a high amount of "artificial data" that can change the actual underlying distribution of 
+the phenomenon being studied. The percentage of data missing for each variable is 
+
+computed as follows.
+
+"""
 
 
 #%%
