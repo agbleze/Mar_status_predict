@@ -456,10 +456,15 @@ for variable_name in marital_status_df.columns:
  
 #%% 
 """  
-From the analysis of missing data, two variables have 20.56% of data missing. 
-This is quite a high percentage of missing data to impute even though only a few 
-features are facing this challenge. Appropriate method will be decided on handling 
-and imputing missing data after further exploratory analysis. 
+From the analysis of missing data, highest education level has as much as 25.47% 
+missing data and weight and height variable has 20% missing data.  Arguably, this will 
+be a lot of data to impute and is likely to influence the underlying distribution with so many 
+"artificial data point" to be introduced when imputed. Other variables such as father_in_hse, 
+mother_in_hse, sex, age among others have less than 2% of data points missing hence can be imputed 
+without altering the variable distribution much. The insights gained from the proportion of 
+missing data available in the various variables will be used to determine how to handle or 
+preprocess missing data.
+
  
 """ 
  
