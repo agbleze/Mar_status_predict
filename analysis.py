@@ -481,7 +481,7 @@ type of analysis as follows.
 
 """
 #%%
-data[['age_years', 'Height', 'weight']].describe()
+marital_status_df[['age_years', 'Height', 'weight']].describe()
 
 """
 From the analysis, the mean gae is about 25 years. The high difference between the 75% percentile
