@@ -494,9 +494,6 @@ it.
 #### Missing data
 
 """ 
-A key insight gained from this is the presence of missing data for last_review and 
-reviews_per_month
-hence have to be handle as part of the data preparation process.
 
 The decision on how to handle missing data is equally influence by the percentage 
 of data that is missing given that imputing a high percentage of missing data introduces 
