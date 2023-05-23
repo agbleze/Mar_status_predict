@@ -498,9 +498,7 @@ it.
 The decision on how to handle missing data is equally influence by the percentage 
 of data that is missing given that imputing a high percentage of missing data introduces 
 a high amount of "artificial data" that can change the actual underlying distribution of 
-the phenomenon being studied. The percentage of data missing for each variable is 
-
-computed as follows.
+the phenomenon being studied. The percentage of data missing for each variable is computed as follows.
 
 """
 
