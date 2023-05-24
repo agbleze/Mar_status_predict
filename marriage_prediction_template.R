@@ -26,7 +26,7 @@ df_g7sec1 <- haven::read_sav(g7sec1)
 
 #######  Predicting the marital status of people   ########
 
-## Target variable
+## Target variable 
 
 # s1q6  What is (NAME’S) present marital status?
 
