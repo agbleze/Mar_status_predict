@@ -500,9 +500,40 @@ of such an assumption in our dataset in undertaken. Visualization and statistica
 used for. First, histogramm is used a visualization technique to determine if the distribution 
 is normal.
 
-
-
 """
+
+#%%
+
+def plot_histogram(data: pd.DataFrame, variable_to_plot: str, 
+                   title: str = None, bins_method: str = 'freedman-Diaconis'
+                   ):
+    data = data.dropna(subset=variable_to_plot).copy()
+    
+    # by default Freedman–Diaconis rule is computed to determine 
+    #optimal number of bins for histogram
+    
+    if bins_method == 'freedman-Diaconis':
+        h = (2 * iqr(np.array(data[variable_to_plot].dropna().values))) / (len(data[variable_to_plot])
+              **(1/3)
+            )
+
+        nbins = (data[variable_to_plot].max() - data[variable_to_plot].min()) / h
+        nbins = round(nbins, 1)
+    else:
+        nbins = 5
+        
+    if title is None:
+        title = f"Distribution of {variable_to_plot}"
+    histogram = (ggplot(data, aes(x=variable_to_plot))
+                + geom_histogram(bins=nbins)
+                + ggtitle(title) 
+            )
+    return print(histogram)
+
+
+
+
+
 
 
 
