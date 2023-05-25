@@ -359,6 +359,8 @@ from plotnine import (ggplot, ggtitle, aes, geom_col, theme_dark,
                       geom_point, geom_smooth, geom_boxplot, coord_flip
                     )
 
+from scipy.stats import iqr
+
 
 #%%
 
@@ -539,7 +541,15 @@ def plot_histogram(data: pd.DataFrame, variable_to_plot: str,
     return print(histogram)
 
 
+#%%
 
+# plot of quantitative predictor variables
+
+numeric_predictors = ['age_yrs', 'height', 'weight']
+
+
+for var in numeric_predictors:
+    plot_histogram(data=marital_status_df, variable_to_plot=var)
 
 
 
