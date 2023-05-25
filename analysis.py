@@ -352,6 +352,13 @@ from sklearn.metrics import (accuracy_score,classification_report,
                              balanced_accuracy_score
                              )
 
+from plotnine import (ggplot, ggtitle, aes, geom_col, theme_dark, 
+                      theme_light, scale_x_discrete,
+                      position_dodge, geom_text, element_text, theme,
+                      geom_histogram, geom_bar, xlab, ylab, scale_y_log10, scale_x_log10,
+                      geom_point, geom_smooth, geom_boxplot, coord_flip
+                    )
+
 
 #%%
 
@@ -406,7 +413,7 @@ data type. Hence the data type of the various variables are determined as follow
 
 """
 data_selected = data[['father_in_hse', 'mother_in_hse', 'months_away_from_hse',
-                         'marital_status', 'sex', 'age_yrs', 'weight', 'Height', 
+                         'marital_status', 'sex', 'age_yrs', 'weight', 'height', 
                          'attend_school', 'highest_edu'
                          ]]
 
@@ -481,11 +488,12 @@ type of analysis as follows.
 
 """
 #%%
-marital_status_df[['age_years', 'Height', 'weight']].describe()
+marital_status_df[['age_yrs', 'height', 'weight']].describe()
 
+#%%
 """
-From the analysis, the mean gae is about 25 years. The high difference between the 75% percentile
-age (37) and maximum age (99) suggests that outliers is likely present and has to be treated. The 
+From the analysis, the mean age is about 34 years. The high difference between the 75% percentile
+age (46) and maximum age (99) suggests that outliers is likely present and has to be treated. The 
 same deductions are made for height and weight. A number of ways can be used to handle outliers 
 when identified and this generally involves choosing an algorithm that is robust to it or imputing 
 it. 
