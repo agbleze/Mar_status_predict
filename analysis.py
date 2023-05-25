@@ -552,7 +552,13 @@ for var in numeric_predictors:
     plot_histogram(data=marital_status_df, variable_to_plot=var)
 
 
+"""
+From the histogram, age and weight are right skewed while hieght is left skewed.
+It is possible to use boxcox transformation to transform them into normal variables 
+should that be needed for a linear algorithm.
 
+
+"""
 
 
 
