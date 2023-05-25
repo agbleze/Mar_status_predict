@@ -491,15 +491,21 @@ when identified and this generally involves choosing an algorithm that is robust
 it. 
 """
 
-#### Missing data
 
-""" 
+### Visualizing the distribution of numeric variables
 
-The decision on how to handle missing data is equally influence by the percentage 
-of data that is missing given that imputing a high percentage of missing data introduces 
-a high amount of "artificial data" that can change the actual underlying distribution of 
-the phenomenon being studied. The percentage of data missing for each variable is computed as follows.
 """
+Some algorithms assume that predictors are normally distributed hence testing such the validity 
+of such an assumption in our dataset in undertaken. Visualization and statistical approaches are 
+used for. First, histogramm is used a visualization technique to determine if the distribution 
+is normal.
+
+
+
+"""
+
+
+
 
 
 #%%
