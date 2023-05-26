@@ -589,6 +589,11 @@ def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
     shapiro_result = shapiro(data[variable_name])
     p_value = shapiro_result[1]
     sig_level_statement = f"at {sig_level * 100}% significance level"
+    if p_value <= sig_level:
+        shapiro_conclusion = "reject Null hypothesis of normal distribution"
+    else:
+        shapiro_conclusion = "fail to reject Null hypothesis of normal distribution"
+        
     
     
     
