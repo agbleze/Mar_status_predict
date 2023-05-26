@@ -594,8 +594,9 @@ def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
     else:
         shapiro_conclusion = "fail to reject Null hypothesis of normal distribution"
         
-    
-    
+    shapiro_interprete = f"With a p-value of {p_value} the shapiro test suggests to: {shapiro_conclusion} {sig_level_statement}"
+    print(f"Shapiro Wilk test result of {variable_name}")
+    print(shapiro_interprete)
     
     
     
