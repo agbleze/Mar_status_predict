@@ -588,7 +588,9 @@ def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
                                    ):
     shapiro_result = shapiro(data[variable_name])
     p_value = shapiro_result[1]
-    sig_level_statement = f"at {sig_level * 100} significance level"
+    sig_level_statement = f"at {sig_level * 100}% significance level"
+    
+    
     
     
     
