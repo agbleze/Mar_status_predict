@@ -571,18 +571,7 @@ is implemented as follows:
 """
 
 #%%
-
 # shapiro test
-model_a_shapiro = stats.shapiro(progress_model_a_df)
-
-
-model_b_shapiro = stats.shapiro(progress_model_b_df)
-
-print(f"Shapiro test for Porgress model A showed a p-value of {model_a_shapiro[1]}")
-
-print(f"Shapiro test for Porgress model B showed a p-value of {model_b_shapiro[1]}")
-
-
 def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
                                    sig_level: int = 0.05
                                    ):
@@ -599,8 +588,10 @@ def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
     print(shapiro_interprete)
     
     
-    
-    
+for var in numeric_predictors:
+    compute_shapiro_normality_test(data=marital_status_df, variable_name=var)
+        
+#%%    
     
     
     
