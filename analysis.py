@@ -359,7 +359,8 @@ from plotnine import (ggplot, ggtitle, aes, geom_col, theme_dark,
                       geom_point, geom_smooth, geom_boxplot, coord_flip
                     )
 
-from scipy.stats import iqr
+from scipy.stats import iqr, shapiro
+import scipy.stats as stats
 
 
 #%%
@@ -557,8 +558,87 @@ From the histogram, age and weight are right skewed while hieght is left skewed.
 It is possible to use boxcox transformation to transform them into normal variables 
 should that be needed for a linear algorithm.
 
+"""
+
+### Statistical analysis to determine normality of numeric predictor distributions
+"""
+In addition to histogram visualization, Shapiro Wilk test is a statistical analysis that 
+can used to test the normality of numeric variable distribution. It tests the null hypothesis 
+that the variable has a normal distribution. The Shapiro test is used as a more objective 
+approach to determining normality hence supplemnts histogram visualization. Shapiro test 
+is implemented as follows:
 
 """
+
+#%%
+
+# shapiro test
+model_a_shapiro = stats.shapiro(progress_model_a_df)
+
+
+model_b_shapiro = stats.shapiro(progress_model_b_df)
+
+print(f"Shapiro test for Porgress model A showed a p-value of {model_a_shapiro[1]}")
+
+print(f"Shapiro test for Porgress model B showed a p-value of {model_b_shapiro[1]}")
+
+
+def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
+                                   sig_level: int = 0.05
+                                   ):
+    shapiro_result = shapiro(data[variable_name])
+    p_value = shapiro_result[1]
+    sig_level_statement = f"at {sig_level * 100} significance level"
+    
+    
+    
+    
+    
+    
+    
+    
+ # test of homogeneity of variance
+def test_homogeneity(data: pd.DataFrame, target_var: str, predictor_var: str):
+    infostat_test = infostat()
+    sig_level = f'at 5% significance level'
+    infostat_test.bartlett(df=data, res_var=target_var, xfac_var=predictor_var)
+    bartlett_summary = infostat_test.bartlett_summary
+    bartlett_pval = bartlett_summary[bartlett_summary['Parameter'] == 'p value']['Value'].item()
+    
+    if bartlett_pval <= 0.05:
+        bart_res = 'reject Null hypothesis of equal variance'
+    else:
+        bart_res = 'fail to reject Null hypothesis of equal variance'
+        
+    bartlett_interprete = f'With a p-value of {bartlett_pval} the bartlett test suggests to: {bart_res} {sig_level}'
+    
+    infostat_test.levene(df=data, res_var=target_var, xfac_var=predictor_var)
+    levene_summary = infostat_test.levene_summary
+    levene_pval = levene_summary[levene_summary['Parameter'] == 'p value']['Value'].item()
+    
+    if levene_pval <= 0.05:
+        levene_res = 'reject Null hypothesis of equal variance'
+    else:
+        levene_res = 'fail to reject Null hypothesis of equal variance'
+        
+    levene_interprete = f'With a p-value of {levene_pval}, the Levene test suggests to: {levene_res} {sig_level} '
+    
+    # results are printed and not return but in case of production environment they will be return
+    print(f'Barlett test results of {predictor_var}')
+    print(f'{bartlett_summary} \n')
+    
+    print(f'Levene test results of {predictor_var}')
+    print(f'{levene_summary} \n')
+    
+    print(f'{bartlett_interprete} \n')
+    print(f'{levene_interprete} \n')
+    
+    
+       
+    
+    
+    
+    
 
 
 
