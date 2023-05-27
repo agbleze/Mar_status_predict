@@ -639,6 +639,7 @@ def barplot(data_to_plot: pd.DataFrame,
                                 + geom_col()
                                 + ggtitle(title) + xlab(variable_to_plot)
                                 + ylab(ylabel)
+                                + theme(axis_text_x=element_text(rotation=45, hjust=1))
                         )
 
         return print(bar_graph)
@@ -650,7 +651,20 @@ for var in numeric_predictors:
             )
 
 
+"""
+Generally, marked difference in the average predictor value between 
+categories of the target variable suggests that the predictor is likely to 
+be a good discriminator between target variable categories hence a strong 
+relationship exist making the predictor relevant for the modelling experiment.
 
+
+
+The graph for the engineered feature (review_is_available) indicates it is likely 
+to be significant predictor 
+for rental price. This is deduce from the high difference in rental price between 
+the two categories. This needs to be subjected to statistical test. 
+First, the variance within the categories are visualized as follows.
+"""
 
     
     
