@@ -938,32 +938,20 @@ for var in numeric_predictors:
                      )
 
 
+"""
+Given that null hypotheisis of homogeneity of variance was rejected for 
+all, a non-parametric method will be used to test if various marital status 
+have equal age, weight, and height. With marital status having more than 2 
+categories, Kruskall Wallis will be used. While the p-value will be critical 
+in drawing conclusion, it has already been deduced the differences in weight, 
+height and even age among marital status are not really huge. Hence, the calculating 
+the effect size is very important in this instance to know the extent of the 
+difference. Kruskall Wallis is implemented as follows:
+
+
+
+"""
 #%%
-import pingouin as pg
-pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
-
-#%%
-
-krus_res = pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
-
-
-# eta2[H] = (H - k + 1)/(n - k); where H is the value obtained in the Kruskal-Wallis test; k is the number of groups; n is the total number of observations.
-
-#%%
-
-k = marital_status_df['marital_status'].nunique()
-
-n = marital_status_df['weight'].count()
-
-#%%
-H = krus_res['H'][0]
-
-#%%
-
-(H -k + 1) / (n - k)
-
-#%%
-
 class KruskallWallisTest(object):
     def __init__(self, data, group_var, variable):
         self.data = data
@@ -985,26 +973,70 @@ class KruskallWallisTest(object):
         k = self.data[self.group_var].nunique()
 
         n = self.data[self.variable].count()
-        H = krus_res['H'][0]
+        H = self.krus_res['H'][0]
         effect_size = (H -k + 1) / (n - k)
         print(f'Effect size: {self.group_var} vs {self.variable}')
         return effect_size
     
     
 #%%
+for var in numeric_predictors:
+    krus = KruskallWallisTest(data = marital_status_df, 
+                                group_var='marital_status', 
+                                variable=var
+                                )
+    print(var)
+    print(f'{krus.compute_kruskall_wallis_test()}')
+    print(f'{krus.effect_size}\n')
 
+"""
+The result of the kruskal wallis test shows that all the predictors analyzed 
+have a relationship with marital status based on the uncorrected p-value at 
+5% significance level. The fact that the p-value being used is uncorrected for 
+mutliple hypothesis testing means that we are prone making a Type I error. 
+
+What is of a greater interest is the strength of the relationship between 
+the predictors assessed and marital status. Age has an effect size of 0.67
+which a moderate effect while height ans weight has 0.05 and 0.14 respectively 
+to score a low effect. This actually corresponds to the bar graphs depicted earlier.
+You is noted that for greater difference in age is seen between various marital 
+status in the bar graph hence a higher effect size and the difference seen in weight among 
+marital statuses on the bar graph is higher compared to that of height hence effect size being higher 
+for weight compared to height. A possible implication of this on model is that when age 
+is added to the predictors for modelling, the model will witness a higher improvement in prediction 
+accuracy compared to weight and height in that order. Thus, for an instance where we want 
+to select features to reduce overfitting and model complexity for computation, age will be 
+selected at the expense of weight and height.  
+
+"""
+
+#%%
+
+# Correlation analysis: Determining multicollinearity
+""" 
+
+
+"""
+
+
+
+
+
+#%%
 krus = KruskallWallisTest(data = marital_status_df, 
                    group_var='marital_status', 
-                   variable='weight'
+                   variable='age_yrs'
                    )
 
 
-#%%
 krus.compute_kruskall_wallis_test()
 
-#%%
+
 krus.effect_size
         
+
+
+
 #%%
 
 
@@ -1056,15 +1088,50 @@ for var in ['weight_outlier_imputed', 'height_outlier_imputed', 'age_yrs_outlier
                                 group_var='marital_status', 
                                 variable=var
                                 )
+    print(var)
+    print(f'{krus.compute_kruskall_wallis_test()}')
+    print(f'{krus.effect_size}\n')
+
+
+#%%
+
+krus = KruskallWallisTest(data = marital_status_df, 
+                         group_var='marital_status', 
+                         variable='age_yrs_outlier_imputed'
+                        )
     
-    krus.compute_kruskall_wallis_test()
-    #krus.effect_size
+krus.compute_kruskall_wallis_test()
+krus.effect_size
 
 
 
 
 
 
+
+#%%
+import pingouin as pg
+pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
+
+#%%
+
+krus_res = pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
+
+
+# eta2[H] = (H - k + 1)/(n - k); where H is the value obtained in the Kruskal-Wallis test; k is the number of groups; n is the total number of observations.
+
+#%%
+
+k = marital_status_df['marital_status'].nunique()
+
+n = marital_status_df['weight'].count()
+
+#%%
+H = krus_res['H'][0]
+
+#%%
+
+(H -k + 1) / (n - k)
 
 #%%
 
