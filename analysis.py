@@ -931,8 +931,11 @@ def test_homogeneity(data: pd.DataFrame, target_var: str, predictor_var: str):
     
     
 #%%
-## test of homogeneity of variance for locale
-test_homogeneity(data=marital_status_df, target_var='weight', predictor_var='marital_status')
+## test of homogeneity of variance
+for var in numeric_predictors:
+    test_homogeneity(data=marital_status_df, target_var=var, 
+                     predictor_var='marital_status'
+                     )
 
 
 #%%
@@ -968,7 +971,7 @@ class KruskallWallisTest(object):
         self.variable = variable
         
     def compute_kruskall_wallis_test(self):
-        self.krus_res = pg.kruskal(data=data, 
+        self.krus_res = pg.kruskal(data=self.data, 
                                    dv=self.variable, 
                                    between=self.group_var
                                    )
@@ -979,9 +982,9 @@ class KruskallWallisTest(object):
         # effect_size for kruskal Wallis = (H -k + 1) / (n - k)
         # H = H-statistic from kruskal Wallis result
         # k = number of groups, n = number of observations
-        k = marital_status_df[self.group_var].nunique()
+        k = self.data[self.group_var].nunique()
 
-        n = marital_status_df[self.variable].count()
+        n = self.data[self.variable].count()
         H = krus_res['H'][0]
         effect_size = (H -k + 1) / (n - k)
         print(f'Effect size: {self.group_var} vs {self.variable}')
@@ -1002,6 +1005,12 @@ krus.compute_kruskall_wallis_test()
 #%%
 krus.effect_size
         
+#%%
+
+
+#%%
+
+
         
     
     
@@ -1021,7 +1030,7 @@ krus.effect_size
 
 
 #%%
-pg.anova(data=marital_status_df, dv='weight', between='marital_status')
+pg.anova(data=marital_status_df, dv='weight_outlier_imputed', between='marital_status')
        
     
 #%%
@@ -1034,7 +1043,25 @@ marital_status_df[['weight_outlier_imputed',
 
     
     
+#%%
+
+for var in ['weight_outlier_imputed', 'height_outlier_imputed', 'age_yrs_outlier_imputed']:
+    test_homogeneity(data=marital_status_df, target_var=var, predictor_var='marital_status')    
+
+
+#%%
+
+for var in ['weight_outlier_imputed', 'height_outlier_imputed', 'age_yrs_outlier_imputed']:
+    krus = KruskallWallisTest(data = marital_status_df, 
+                                group_var='marital_status', 
+                                variable=var
+                                )
     
+    krus.compute_kruskall_wallis_test()
+    #krus.effect_size
+
+
+
 
 
 
