@@ -361,7 +361,8 @@ from plotnine import (ggplot, ggtitle, aes, geom_col, theme_dark,
 
 from scipy.stats import iqr, shapiro
 import scipy.stats as stats
-
+import plotly.express as px
+from bioinfokit.analys import stat as infostat
 
 #%%
 
@@ -591,9 +592,133 @@ def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
     
 for var in numeric_predictors:
     compute_shapiro_normality_test(data=marital_status_df, variable_name=var)
+    
+    
+#%%    
+"""
+###   Visualizing outliers
+
+#### Boxplot to visualize outliers
+One of the exploratory analysis that can be on numeric variables is to visualize, detect and even 
+treat outliers. Infact, some algorithms are impacted by the presence of outliers hence analyzed 
+to make an inform decision on which class of algorithm to choose from. 
+
+To visualize an outlier, boxplot is used. 
+
+"""    
+
+#%%
+# function to create boxplot
+def make_boxplot(data: pd.DataFrame, variable_name: str):
+    """This function accepts a data and variable name and returns a boxplot
+
+    Args:
+        data (pd.DataFrame): Data to visualize
+        variable_name (str): variable to visualize with boxplot
+    """
+    fig = px.box(data_frame=data, y = variable_name,
+                 template='plotly_dark', 
+                 title = f'Boxplot to visualize outliers in {variable_name}',
+                 height=700
+                 )
+    fig.show()
+
+
+#%% plot outliers
+for var in numeric_predictors:
+    make_boxplot(data=marital_status_df, variable_name=var)    
+    
+
+"""
+While boxplot have been used to as a graphical method to identify and 
+visualize outliers so far, a number of statistical techniques exist for 
+detecting outliers. 
+This includes using the standard deviation method whereby data points 
+that are more than 3 standard deviations  are considered outliers. 
+Interquantile range is equally used as a technique for identifying 
+outliers. In this case, a value is regarded as an outlier when it is 
+greater than 1.5 times the interquartile range above the third quartile 
+or below the first quartile. For this, upper limits and lower limits 
+need to be define for capping outliers. 
+
+A number of strategies exist to treat outliers and this includes trimming, 
+capping, imputing with mean or other forms of descriptive statistics and 
+various forms of transformation such as logarithm and square root among others. 
+
+
+The interquartile range method is employed here to identify outliers and 
+winsorization is used to treat outliers. In this case, outliers are set to 
+the upper limit and lower limit defined after estimating the interquantile range times 1.5.
+
+From the boxplots, height and weight have outliers above the upper limit and 
+below the lower limit while age has outliers only above the upper limit and this 
+decution needs to statistically established beyond visualization. To do this,
+a class is implemented to accept data and variable to be analyzed. The class 
+will have behaviours such as functions for identifying and getting outlier samples and 
+imputing outliers. Certain attributes such as upper 
+limit and lower limit used among others would also be worth accessing for perusal 
+by the user. This is implemented below.
+"""
+
+#%%
+class OutlierImputer(object):
+  def __init__(self, data: pd.DataFrame, colname: str):
+    self.data = data
+    self.colname = colname
+    self.first_quantile = self.data[self.colname].quantile(q=0.25)
+    self.third_quantile = self.data[self.colname].quantile(q=0.75)
+    self.inter_quantile_rng = 1.5*(self.third_quantile-self.first_quantile)
+    self.upper_limit = self.inter_quantile_rng + self.third_quantile
+    self.lower_limit = self.first_quantile - self.inter_quantile_rng
+
+  @property
+  def get_outlier_samples(self):
+    outlier_samples = (self.data[(self.data[self.colname] > self.upper_limit) | 
+                               (self.data[self.colname] < self.lower_limit)]
+                              [[self.colname]]
+                      )
+    return outlier_samples
+
+
+
+  def impute_outlier(self):
+    self.outlier_data = self.data.copy()
+    self.outlier_data[f'{self.colname}_outlier_imputed'] = (
+                    np.where(self.outlier_data[self.colname] > self.upper_limit, 
+                                                   self.upper_limit, 
+                             np.where(self.outlier_data[self.colname] < self.lower_limit, 
+                                                   self.lower_limit, 
+                             self.outlier_data[self.colname]
+                            )
+                            )
+                  )
+    
+    return self.outlier_data
+    
+
+#%%
+for var in numeric_predictors:
+  outlier_imputer = OutlierImputer(data=marital_status_df, colname=var)
+  print(f'First quantile of {var}: {outlier_imputer.first_quantile}')
+  print(f'Third quantile of {var}: {outlier_imputer.third_quantile}')
+  print(f'Lower limit of {var}: {outlier_imputer.lower_limit}')
+  print(f'Upper limit of {var}: {outlier_imputer.upper_limit}')
+  print(f'Number of outliers in {var}: {len(outlier_imputer.get_outlier_samples)}')
+  marital_status_df = outlier_imputer.impute_outlier()
+  make_boxplot(data=marital_status_df, 
+               variable_name=f'{var}_outlier_imputed'
+               )
+
+
+#%%
+"""
+From the results of implementing the Outlier class, it is evident that outliers are no more 
+present of identifying and treating them.
+"""
+    
         
 #%%    
-    
+## Feature selection for numeric variables    
 ### Visualizing relationship between numberic variables and target variable
 """
 Bar plot can be used to visualize how numeric predictors such as age varies among the 
@@ -672,11 +797,100 @@ that clearly classifiers marital status hence age is deduced to be a relevant pr
 
 """
 
+#%% Statistical test to determine if numeric predictors are relevant for predicting marital status
+
+"""
+While the bar graph visualization provides a pictorial way to understand whether a numeric predictor 
+is relevant for predicting marital status, determining what constituent a significant noticiable 
+difference between various categories is rather subjective. To introduce a more objective benchmark,
+statistical test is required.
+
+To determine if a predictor has a significant relationship with marital status hence a relevant predictor,
+hypothesis is tested to determine whether there is a significant 
+difference in predictors such as age, height and weight between various marital status. 
+A significant difference suggests that the variable is a significant predictor of marital 
+status hence have an influence that will improve the model. Univariate 
+statistical methods are used to determine that.
 
 
+### Feature selection: Is locale a relevant predictor of hits 
+
+A factor that is considered in determining whether a categorical variable such as locale is a relevant 
+predictor is the determination of variance of hits between the various categories of locale. By this, when 
+hits significantly varies between the various categories of locale, it is likely to be a statistically 
+significant predictor of hits. This notions applies to other categorical predictors such as
+'agent_id', 'locale', 'day_of_week' and 'traffic_type'. For high cardinality predictors such as 'agent_id',
+'entry_page' and 'path_id_set', it better to first 
+treat them and reduce the classes to a manageable few before applying relevant statistical test.
+
+
+In determining which statistical test to use, the assumptions required were tested to determine 
+whether a parametric or non-parametric method of statistical test was appropriate. 
+A parametric method such as Student t-test requires the data to be normally distributed and variance 
+to be homogeneous for the various categories present in the predictor. 
+When these assumptions are not captured by the data then a non-parametric method is appropriately used.
+
+
+Both visualization and statistical methods are used to verify these assumptions. For a categorical 
+variable, Boxplot is a good graphical technique to visulaize how hits varies within the various categories.
+This is then supplemented with a levene test and bartlett test to statistically verify that variance 
+depicted in by boxplot is indeed homogeneous. Barlett and levene method determines whether groups have homogeneous variance and levene is non-parametric method. 
+
+
+The discussion is implemented in code for all low cardinal variables starting with locale as follows.
+
+
+
+"""
+
+
+#%%
+def boxplot(data_to_plot: pd.DataFrame, x_colname: str, 
+            y_colname: str,
+            title: str = None
+            ):
+    if title is None:
+        title = f'Distribution of {y_colname} among various {x_colname}'
+        
+    box_graph = (ggplot(data=data_to_plot, 
+                        mapping=aes(x=x_colname, y=y_colname)
+                        )
+                    + geom_boxplot()
+                    + coord_flip()
+                    + ggtitle(title)
+                )
+    # the returned ggplot is printed to draw the graph which is not 
+    # the case by default  when not printed
+    return print(box_graph)
     
     
- 
+    
+#%%
+boxplot(data_to_plot=marital_status_df, x_colname='marital_status', y_colname='age_yrs')    
+
+
+#%%
+
+"""
+From the boxplot of hits distribution among locales, there appears to be difference in how 
+hits varies among the various locales and some data points are arguably outliers. 
+A statistical test is undertaken to determine if hits in homogenous among the 
+varous groups. Such a statistical test is premised on a hypothesis which is framed as 
+follows: 
+
+
+Null Hypothesis (H0): There is no statistically significant difference in variance of hits 
+            between categories of a categorical predictor (locale)
+
+Alternative Hypothesis (H1): There is statistically significant difference in variance of hits
+            between categories of a categorical predictor (locale)
+            
+            
+For all hypothesis test of homogeneity, this framework is assummed for each categorical predictor.
+
+Both Levene test and Bartlett test are used to check homogeneity and implemented as follows:
+
+""" 
  
     
  #%% test of homogeneity of variance
@@ -716,8 +930,70 @@ def test_homogeneity(data: pd.DataFrame, target_var: str, predictor_var: str):
     print(f'{levene_interprete} \n')
     
     
+#%%
+## test of homogeneity of variance for locale
+test_homogeneity(data=marital_status_df, target_var='weight', predictor_var='marital_status')
+
+
+#%%
+import pingouin as pg
+pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
+
+#%%
+
+krus_res = pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
+
+
+# eta2[H] = (H - k + 1)/(n - k); where H is the value obtained in the Kruskal-Wallis test; k is the number of groups; n is the total number of observations.
+
+#%%
+
+k = marital_status_df['marital_status'].nunique()
+
+n = marital_status_df['weight'].count()
+
+#%%
+H = krus_res['H'][0]
+
+#%%
+
+(H -k + 1) / (n - k)
+
+#%%
+
+def effect_size(data, between_group_var, ):
+    # effect_size for kruskal Wallis = (H -k + 1) / (n - k)
+    # H = H-statistic from kruskal Wallis result
+    # k = number of groups, n = number of observations
+    
+    
+    
+
+
+
+
+
+
+#%%
+
+
+
+
+
+
+
+#%%
+pg.anova(data=marital_status_df, dv='weight', between='marital_status')
        
     
+#%%
+
+marital_status_df[['weight_outlier_imputed', 
+                    'height_outlier_imputed', 
+                    'age_yrs_outlier_imputed'
+                    ]].corr(method='spearman')
+
+
     
     
     
