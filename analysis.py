@@ -554,7 +554,10 @@ for var in numeric_predictors:
 
 
 """
-From the histogram, age and weight are right skewed while hieght is left skewed.
+From the histogram, some level of skewness is present in all variables with age and weight 
+appearing to be slightly right skewed while hieght is left skewed. The skewness is not very 
+pronounce to say for certainty the distribution is not normally distributed as such conclusions
+could more subjective than objective. In such instances statistical test is needed.
 It is possible to use boxcox transformation to transform them into normal variables 
 should that be needed for a linear algorithm.
 
