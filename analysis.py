@@ -502,7 +502,6 @@ when identified and this generally involves choosing an algorithm that is robust
 it. 
 """
 
-
 ### Visualizing the distribution of numeric variables
 
 """
@@ -512,7 +511,6 @@ used for. First, histogramm is used a visualization technique to determine if th
 is normal.
 
 """
-
 #%%
 
 def plot_histogram(data: pd.DataFrame, variable_to_plot: str, 
@@ -573,16 +571,6 @@ is implemented as follows:
 
 """
 
-### Visualizing relationship between numberic variables and target variable
-
-
-
-
-
-
-
-
-
 #%%
 # shapiro test
 def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
@@ -606,10 +594,70 @@ for var in numeric_predictors:
         
 #%%    
     
+### Visualizing relationship between numberic variables and target variable
+"""
+Bar plot can be used to visualize how numeric predictors such as age varies among the 
+various categories of marriage status (target variable) on the average. This technique 
+enables gaining an insight into the relevance of a predictor to predicting marriage status.
+First, the data is prepared for visualization.
+"""
+
+#%%
+
+avg_predicors_per_marital_status = (marital_status_df.groupby(by='marital_status')
+                                    [numeric_predictors].agg('mean').reset_index()
+                                    )
+
+
+#%%
+#### Now, the function for plotting it is defined as follows:
+
+# barplot 
+def barplot(data_to_plot: pd.DataFrame, 
+            variable_to_plot: str, y_colname: str = None
+            ):
+    title = f'Average {y_colname} per {variable_to_plot}'
+    ylabel = f'Average {y_colname}'
+    if y_colname is None:
+        bar_graph = (ggplot(data=data_to_plot, mapping=aes(x=variable_to_plot, 
+                                                fill=variable_to_plot
+                                            )
+                                )
+                                + geom_bar()  
+                                + ggtitle(title) + xlab(variable_to_plot)
+                                + ylab(ylabel)
+                        )
+
+        return print(bar_graph)
+    else:
+        bar_graph = (ggplot(data=data_to_plot, 
+                            mapping=aes(x=variable_to_plot, 
+                                        y=y_colname,
+                                        fill=variable_to_plot
+                                        )
+                                )
+                                + geom_col()
+                                + ggtitle(title) + xlab(variable_to_plot)
+                                + ylab(ylabel)
+                        )
+
+        return print(bar_graph)
+
+#%%
+for var in numeric_predictors:
+    barplot(data_to_plot=avg_predicors_per_marital_status,
+            variable_to_plot='marital_status', y_colname=var
+            )
+
+
+
+
     
     
+ 
+ 
     
- # test of homogeneity of variance
+ #%% test of homogeneity of variance
 def test_homogeneity(data: pd.DataFrame, target_var: str, predictor_var: str):
     infostat_test = infostat()
     sig_level = f'at 5% significance level'
