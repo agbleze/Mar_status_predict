@@ -961,10 +961,48 @@ H = krus_res['H'][0]
 
 #%%
 
-def effect_size(data, between_group_var, ):
-    # effect_size for kruskal Wallis = (H -k + 1) / (n - k)
-    # H = H-statistic from kruskal Wallis result
-    # k = number of groups, n = number of observations
+class KruskallWallisTest(object):
+    def __init__(self, data, group_var, variable):
+        self.data = data
+        self.group_var = group_var
+        self.variable = variable
+        
+    def compute_kruskall_wallis_test(self):
+        self.krus_res = pg.kruskal(data=data, 
+                                   dv=self.variable, 
+                                   between=self.group_var
+                                   )
+        return self.krus_res
+    
+    @property
+    def effect_size(self):
+        # effect_size for kruskal Wallis = (H -k + 1) / (n - k)
+        # H = H-statistic from kruskal Wallis result
+        # k = number of groups, n = number of observations
+        k = marital_status_df[self.group_var].nunique()
+
+        n = marital_status_df[self.variable].count()
+        H = krus_res['H'][0]
+        effect_size = (H -k + 1) / (n - k)
+        print(f'Effect size: {self.group_var} vs {self.variable}')
+        return effect_size
+    
+    
+#%%
+
+krus = KruskallWallisTest(data = marital_status_df, 
+                   group_var='marital_status', 
+                   variable='weight'
+                   )
+
+
+#%%
+krus.compute_kruskall_wallis_test()
+
+#%%
+krus.effect_size
+        
+        
     
     
     
