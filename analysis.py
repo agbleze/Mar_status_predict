@@ -665,15 +665,14 @@ Guided by that, the graph of average height per marital status shows very close 
 hence very little differece is discernible. By this, height is likely not relevant for 
 predicting marital status. Similar case can be made for weight.
 
+Marked difference is noted in average age among various marital status. For instance,
+average age for "Never married" is 19 years and that of "Married" is 43 years. With such 
+large differences, it is likely to draw a decision boundary or a line for age with a large margin 
+that clearly classifiers marital status hence age is deduced to be a relevant predictor.
 
-
-
-The graph for the engineered feature (review_is_available) indicates it is likely 
-to be significant predictor 
-for rental price. This is deduce from the high difference in rental price between 
-the two categories. This needs to be subjected to statistical test. 
-First, the variance within the categories are visualized as follows.
 """
+
+
 
     
     
