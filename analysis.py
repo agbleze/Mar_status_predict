@@ -656,6 +656,15 @@ Generally, marked difference in the average predictor value between
 categories of the target variable suggests that the predictor is likely to 
 be a good discriminator between target variable categories hence a strong 
 relationship exist making the predictor relevant for the modelling experiment.
+The contrary where the difference is not significant, then the relationship between 
+the target and predictor is weak hence all categories of the target variable are 
+receiving similar signals from the predictor making the predictor not a relevant 
+variable for modelling.
+
+Guided by that, the graph of average height per marital status shows very close average values 
+hence very little differece is discernible. By this, height is likely not relevant for 
+predicting marital status. Similar case can be made for weight.
+
 
 
 
