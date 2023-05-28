@@ -359,7 +359,7 @@ from plotnine import (ggplot, ggtitle, aes, geom_col, theme_dark,
                       geom_point, geom_smooth, geom_boxplot, coord_flip
                     )
 
-from scipy.stats import iqr, shapiro
+from scipy.stats import iqr, shapiro, chisquare
 import scipy.stats as stats
 import plotly.express as px
 from bioinfokit.analys import stat as infostat
@@ -1076,9 +1076,8 @@ likely to be related and a good predictor.
 The analysis is undertaken below:
 """
 
-'mother_in_hse',
-                              'sex','attend_school', 'highest_edu',
-                              
+
+                         
 #%%
 (marital_status_df.groupby(by=['marital_status', 'father_in_hse'])
                             [['father_in_hse']].agg(func='count')
@@ -1107,24 +1106,68 @@ class CategoricalDataExplorer(object):
                 ) + geom_col(stat='identity', position='dodge') 
                 + theme_dark() 
                 + ggtitle(f'Total count of {self.vars_to_count} per {xaxis_var}')
+                + theme(axis_text_x=element_text(rotation=45, hjust=1))
                 )
         print(graph)
 
 #%%
-catexplr = CategoricalDataExplorer(data=marital_status_df, groupby_vars=['marital_status','father_in_hse'],
-                        vars_to_count='father_in_hse'
-                        )
+categ_var =['father_in_hse', 'mother_in_hse', 'sex','attend_school', 'highest_edu']
+     
+for var in categ_var:
+    cat_explr = CategoricalDataExplorer(data=marital_status_df,
+                            groupby_vars=['marital_status', var],
+                            vars_to_count=var
+                            )
+    cat_explr.count_total_per_group()
+    cat_explr.plot_bar()
+
 
 #%%
-catexplr.count_total_per_group()
+"""
+While the visualization do provide some clues, statistical analysis will be a 
+concrete stand on which to select relevant features that are related to marital status 
+for prediction. 
+
+For this, Chi squared test of independence will be used to assess whether 
+the various categorical variables are related to marital status.
+
+First contingency table is created between the categorical variable and marital status 
+and based on the chi-squared test is computed to compare the observed and expected outcome
+and decide on reject or failing to reject the null hypothesis of a categorical predictor 
+being independent of marital status at 5% significant level. This is implemented as follows:
+
+
+
+"""
 
 #%%
-catexplr.plot_bar()
 
 
 
+## contingency table between sales script type and conversion
+
+conversion_script_type_contengency = pd.crosstab(marital_status_df['father_in_hse'], marital_status_df['marital_status'])
+
+print(conversion_script_type_contengency)
 
 
+#%%
+from bioinfokit.analys import stat
+#%%## chi-square test of independence
+chi_square_result = stat()
+
+chi_square_result.chisq(df=conversion_script_type_contengency)
+
+#%%
+print(chi_square_result.summary)
+
+
+class ChisquaredComputer(object):
+    def __init__(self, data, y_var, x_var):
+        self.data = data
+        self.y_var = y_var
+        self.x_var = x_var
+        
 
 
 
