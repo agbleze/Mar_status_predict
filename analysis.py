@@ -1014,7 +1014,22 @@ selected at the expense of weight and height.
 
 # Correlation analysis: Determining multicollinearity
 """ 
+In selecting numeric predictors for modelling, there is the need to prevent duplication 
+of signal sources and redundant predictors need to be assessed and removed. A predictor 
+is expected to provide a unique signal that contribute to making predictions. The problem 
+with including redundant predictors in the model is that it becomes unstable, unnecassarily 
+complex and even overfit the training data. 
+Strong correlation between predictors
+implies the predictors are supplying similar information to the algorithm.
+Ever undertaking a regression analysis and 
+released the coefficients of the predictors changes whenever a new predictor is added or removed
+from the model? Chances are that some of the predictors are corelated. 
+Multicollinearity is assessed to determine whether some of the numeric predictors are strongly 
+correlated and if that is the case, for each correlated predictors, one one of them is 
+selected for modelling.
 
+Correlation analysis is undertaken on the numeric predictors to 
+check for multicollinearity as follows;
 
 """
 
