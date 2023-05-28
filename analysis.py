@@ -1034,7 +1034,19 @@ a parametric method such as pearson are not met.
 """
 #%%
 
-marital_status_df[['weight','height','age_yrs']].corr(method='spearman')
+spearman_corr_matrix = marital_status_df[['weight','height','age_yrs']].corr(method='spearman')
+
+#%%
+import seaborn as sns
+# Create a mask to hide the upper triangle
+mask = np.zeros_like(spearman_corr_matrix)
+mask[np.triu_indices_from(mask)] = True
+
+# visualize correlation matrix
+sns.heatmap(spearman_corr_matrix, mask=mask, cmap=sns.color_palette("GnBu_d"), 
+            square=True, linewidths=.5, cbar_kws={"shrink": .5}
+            )
+plt.show()
 
 #%%
 """
@@ -1048,11 +1060,58 @@ reletaed to marital status, the effect size are low and correspond to deduction 
 bar plot visualization that they are not a good dsicriminator of marital status.
  
 """
-
-
 #%%
 
 ### Feature selection for categorical features
+#### Visualizing the relationship between categorical features and marital status
+"""
+The relationship between categorical predictors and marital status can be visualized using 
+barplot that capture the count of the various classes of a categorical predictor in 
+various marital status. For instance, for sex, the number of male and female per each 
+marital status can be captured. Where male and female are equally distributed among the 
+various marital status then sex is not related to marital status. The reverse where a particular
+sex, say female is found more in a marital status example divorce will mean that sex is 
+likely to be related and a good predictor.
+
+The analysis is undertaken below:
+"""
+
+'mother_in_hse',
+                              'sex','attend_school', 'highest_edu',
+                              
+#%%
+(marital_status_df.groupby(by=['marital_status', 'father_in_hse'])
+                            [['father_in_hse']].agg(func='count')
+                            .rename(columns={'father_in_hse': 'total_count'})
+                            .reset_index()
+)
+
+#%%
+class CategoricalDataExplorer(object):
+    def __init__(self, data, groupby_vars: str, vars_to_count: str):
+        self.data = data
+        self.groupby_vars = groupby_vars
+        self.vars_to_count = vars_to_count
+    def count_total_per_group(self, agg_method: str = 'count'):
+        self.agg_data = (data.groupby(by=self.groupby_vars)
+                                [self.vars_to_count].agg(func=agg_method)
+                                .rename(columns={self.vars_to_count: 'total_count'})
+                                .reset_index()
+                    )
+        return self.agg_data
+    def plot_bar(self, xaxis_var: str = 'marital_status'):
+        graph = (ggplot(self.agg_data, 
+                aes(x=xaxis_var, y='total_count', fill=self.vars_to_count)
+                ) + geom_col(stat='identity', position='dodge') 
+                + theme_dark() 
+                + ggtitle(f'Total count of {self.vars_to_count} per {xaxis_var}')
+                )
+        print(graph)
+
+#%%
+
+
+
 
 
 
