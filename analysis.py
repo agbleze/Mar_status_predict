@@ -1039,9 +1039,29 @@ marital_status_df[['weight','height','age_yrs']].corr(method='spearman')
 #%%
 """
 The spearman rho correlation result shows a general week correlation among 
-the various predictors hence multicollinearity is absent.
+the various predictors hence multicollinearity is absent. 
+
+Based on all the analysis undertaken, age is selected as a predictor for modelling. 
+Weight and height are not selected because they are less relevant for predicting 
+marital status based on the bar plot. Even though the kruskall Wallis suggests the they are 
+reletaed to marital status, the effect size are low and correspond to deduction from the 
+bar plot visualization that they are not a good dsicriminator of marital status.
  
 """
+
+
+#%%
+
+### Feature selection for categorical features
+
+
+
+
+
+
+
+
+
 
 
 
