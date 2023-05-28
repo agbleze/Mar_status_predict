@@ -1038,8 +1038,8 @@ marital_status_df[['weight','height','age_yrs']].corr(method='spearman')
 
 #%%
 """
-The spearman rho correlation result show a general week correlation among among 
-the various predictors
+The spearman rho correlation result shows a general week correlation among 
+the various predictors hence multicollinearity is absent.
  
 """
 
