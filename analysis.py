@@ -1139,35 +1139,43 @@ being independent of marital status at 5% significant level. This is implemented
 
 
 """
-
-#%%
-
-
-
-## contingency table between sales script type and conversion
-
-conversion_script_type_contengency = pd.crosstab(marital_status_df['father_in_hse'], marital_status_df['marital_status'])
-
-print(conversion_script_type_contengency)
-
-
 #%%
 from bioinfokit.analys import stat
-#%%## chi-square test of independence
-chi_square_result = stat()
-
-chi_square_result.chisq(df=conversion_script_type_contengency)
-
-#%%
-print(chi_square_result.summary)
-
-
 class ChisquaredComputer(object):
     def __init__(self, data, y_var, x_var):
         self.data = data
         self.y_var = y_var
         self.x_var = x_var
         
+    def compute_contingency_table(self):
+        self.contengency_table = pd.crosstab(self.data[self.y_var], 
+                                             self.data[self.x_var]
+                                            )
+
+        return self.contengency_table
+    def compute_chisquared_test_of_independence(self):
+        chi_square_result = stat()
+        chi_square_result.chisq(df=self.contengency_table)
+        return print(f'Relationship between {self.y_var} and {self.x_var} \n {chi_square_result.summary}')
+
+
+#%%
+for var in categ_var:
+    chisquared = ChisquaredComputer(data=marital_status_df, 
+                                    x_var=var, 
+                                    y_var='marital_status'
+                                    )
+        
+    chisquared.compute_contingency_table()
+
+    chisquared.compute_chisquared_test_of_independence()
+
+
+"""
+From the chi square analysis all the categorical varibles are relevant for modelling 
+hence selected
+"""
+
 
 
 
