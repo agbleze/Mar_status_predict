@@ -1029,10 +1029,19 @@ correlated and if that is the case, for each correlated predictors, one one of t
 selected for modelling.
 
 Correlation analysis is undertaken on the numeric predictors to 
-check for multicollinearity as follows;
-
+check for multicollinearity. Spearman method was used because the assumptions for 
+a parametric method such as pearson are not met. 
 """
+#%%
 
+marital_status_df[['weight','height','age_yrs']].corr(method='spearman')
+
+#%%
+"""
+The spearman rho correlation result show a general week correlation among among 
+the various predictors
+ 
+"""
 
 
 
