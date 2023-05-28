@@ -1094,7 +1094,9 @@ class CategoricalDataExplorer(object):
         self.vars_to_count = vars_to_count
     def count_total_per_group(self, agg_method: str = 'count'):
         self.agg_data = (data.groupby(by=self.groupby_vars)
-                                [self.vars_to_count].agg(func=agg_method)
+                                [[self.vars_to_count]].agg(func=agg_method)
+                                #.rename_axis(columns={self.vars_to_count: 'total_count'})
+                                #.reset_index()
                                 .rename(columns={self.vars_to_count: 'total_count'})
                                 .reset_index()
                     )
@@ -1109,11 +1111,15 @@ class CategoricalDataExplorer(object):
         print(graph)
 
 #%%
+catexplr = CategoricalDataExplorer(data=marital_status_df, groupby_vars=['marital_status','father_in_hse'],
+                        vars_to_count='father_in_hse'
+                        )
 
+#%%
+catexplr.count_total_per_group()
 
-
-
-
+#%%
+catexplr.plot_bar()
 
 
 
