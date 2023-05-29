@@ -1176,44 +1176,30 @@ From the chi square analysis all the categorical varibles are relevant for model
 hence selected
 """
 
-
-
-
-
-
-
 #%%
-krus = KruskallWallisTest(data = marital_status_df, 
-                   group_var='marital_status', 
-                   variable='age_yrs'
-                   )
+"""
+### Using insights gained from exploratory analysis to inform modelling approach
+
+The findings of non-linear relationship between 
+the predictors and target variable, presence of outliers,
+and sizeable missing values suggest that a non-parametric
+model that handles non-linear relationship,
+outliers and missing values will be appropriate for the task. Also, the fact missing data has already been handled through feature engineering and selection was also considered.
+ 
+Moreover, as identified in the objectives, the focus of the task is to achieve good precision with a minimum requirement of being better than random guesses rather than interpretability of the model and this informed a decision to choose an algorithm that satisfy these needs. 
 
 
-krus.compute_kruskall_wallis_test()
+On the basis of the findings from the exploratory analysis, a model 
+that employs decision tree will be used. Hence, Random Forest Regressor algorithm from the sklearn library is implemented.
+
+Given that the target variable is known and continuous, supervised regression is used for the task. 
 
 
-krus.effect_size
-        
+From the exploratory analysis, the filter-based selection method resulted in the selection of 'neighbourhood_group', 'room_type', 'minimum_nights', 'number_of_reviews', 'calculated_host_listings_count' and 'availability_365' as predictors for modelling. In addition, 
+'review_is_available' is produced from feature engineering to be added to predictors for modelling.
+       
+"""
 
-
-
-#%%
-
-
-#%%
-
-
-        
-    
-    
-    
-
-
-
-
-
-
-#%%
 
 
 
