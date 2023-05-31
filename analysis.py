@@ -1180,7 +1180,10 @@ hence selected
 """
 ### Using insights gained from exploratory analysis to inform modelling approach
 
-The findings of non-linear relationship between 
+The findings of a discrete target variable informs the decisio to use a supervised classifcation a
+algorithm.
+
+non-linear relationship between 
 the predictors and target variable, presence of outliers,
 and sizeable missing values suggest that a non-parametric
 model that handles non-linear relationship,
