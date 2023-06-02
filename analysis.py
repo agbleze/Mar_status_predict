@@ -1188,10 +1188,18 @@ which is also depicted by the visualization. Age with imputed outliers will thus
 
 The presence of missiing values also informs the modelling technique to use. Indeed, several 
 experiments can be undertaken with different ways of handling missing data to identify what works 
-best for the problem. For this task, the decision is made to choose an algorithm that 
+best for the problem. For this task, the decision is made to choose an algorithm that handles 
+missing values natively. 
 
+Moreover, the project objective also provides hints to inform the choice of algorithm.
+The focus of this project is to achieve good precision with a minimum requirement of 
+being better than random guesses rather than interpretability of the model 
+and this informs the choice of algorithm. It is worth noting that in a full scope machine learning 
+operations, several algorithms will be tested and optimized for the problem and the best algorithm 
+chosen based on the model metrics comparison. Hence, it is not the case that, the algorithm to 
+use is always known before hand.
 
-
+Based on the 
 
 
 
@@ -1205,10 +1213,7 @@ outliers and missing values will be appropriate for the task.
 Also, the fact missing data has already been handled through feature engineering and
 selection was also considered.
  
-Moreover, as identified in the objectives, the focus of the task is to achieve 
-good precision with a minimum requirement of being better than random guesses 
-rather than interpretability of the model and this informed a decision to choose 
-an algorithm that satisfy these needs. 
+
 
 
 On the basis of the findings from the exploratory analysis, a model 
