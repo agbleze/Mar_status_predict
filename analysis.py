@@ -1184,7 +1184,13 @@ The findings of a discrete target variable informs the decision to use a supervi
 algorithm. Moreover, based on the filter-based selection method, all categorical predictors 
 were deemed to be relevant for the modelling task. For numeric predictors, only age will be used, 
 given that it is the only variable which is both significantly related, with a moderate effect size 
-which is also depicted by the visualization. 
+which is also depicted by the visualization. Age with imputed outliers will thus be used.
+
+The presence of missiing values also informs the modelling technique to use. Indeed, several 
+experiments can be undertaken with different ways of handling missing data to identify what works 
+best for the problem. For this task, the decision is made to choose an algorithm that 
+
+
 
 
 
@@ -1195,9 +1201,14 @@ non-linear relationship between
 the predictors and target variable, presence of outliers,
 and sizeable missing values suggest that a non-parametric
 model that handles non-linear relationship,
-outliers and missing values will be appropriate for the task. Also, the fact missing data has already been handled through feature engineering and selection was also considered.
+outliers and missing values will be appropriate for the task. 
+Also, the fact missing data has already been handled through feature engineering and
+selection was also considered.
  
-Moreover, as identified in the objectives, the focus of the task is to achieve good precision with a minimum requirement of being better than random guesses rather than interpretability of the model and this informed a decision to choose an algorithm that satisfy these needs. 
+Moreover, as identified in the objectives, the focus of the task is to achieve 
+good precision with a minimum requirement of being better than random guesses 
+rather than interpretability of the model and this informed a decision to choose 
+an algorithm that satisfy these needs. 
 
 
 On the basis of the findings from the exploratory analysis, a model 
