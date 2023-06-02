@@ -1182,7 +1182,7 @@ hence selected
 
 The findings of a discrete target variable informs the decision to use a supervised classifcation
 algorithm. Moreover, based on the filter-based selection method, all categorical predictors 
-were deemed to be relevant for the 
+were deemed to be relevant for the modelling task. 
 
 
 
