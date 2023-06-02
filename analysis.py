@@ -1199,35 +1199,34 @@ operations, several algorithms will be tested and optimized for the problem and 
 chosen based on the model metrics comparison. Hence, it is not the case that, the algorithm to 
 use is always known before hand.
 
-Based on the 
+Based on the insights gained from the exploratoy analysis, Histgradientboosting Classifier is 
+chosen as a machine learning algorithm to solve the problem.
 
-
-
-
-
-non-linear relationship between 
-the predictors and target variable, presence of outliers,
-and sizeable missing values suggest that a non-parametric
-model that handles non-linear relationship,
-outliers and missing values will be appropriate for the task. 
-Also, the fact missing data has already been handled through feature engineering and
-selection was also considered.
- 
-
-
-
-On the basis of the findings from the exploratory analysis, a model 
-that employs decision tree will be used. Hence, Random Forest Regressor algorithm from the sklearn library is implemented.
-
-Given that the target variable is known and continuous, supervised regression is used for the task. 
-
-
-From the exploratory analysis, the filter-based selection method resulted in the selection of 'neighbourhood_group', 'room_type', 'minimum_nights', 'number_of_reviews', 'calculated_host_listings_count' and 'availability_365' as predictors for modelling. In addition, 
-'review_is_available' is produced from feature engineering to be added to predictors for modelling.
-       
 """
 
+#%%
+#%% Preprocessing data for machine learning task
+"""
+## Preprocessing data for machine learning
+Before the machine algorithm can be fed with data, it has to be in a format that it 
+consume without vomitting errors! For instance, machine learning algorithms typically,
 
+
+
+The preprocessing pipeline for predictors to be prepared for modeling is highlighted as follows
+
+1. Multi-class categorical variables are encoded using One-hot encoding strategy 
+2. Numercial variables are scaled using the standard scaler.
+
+The preprocessing pipeline is implemented as follows: 
+
+#### Encoding categorical variables to prepare them for modelling
+
+While several encoding strategies exist to transform categorical variable into 
+forms that machine learning models can understand, one hot encoding was used 
+in this task. In the absence of high cardinality predictor, one hot encoding does not introduce the challenge of exponential growth of dimension and its associated curse of dimensionality hence appropriate. The preprocessing pipeline is implemented as follows:  
+
+"""
 
 
 
