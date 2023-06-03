@@ -1063,6 +1063,125 @@ bar plot visualization that they are not a good dsicriminator of marital status.
 #%%
 
 ### Feature selection for categorical features
+"""
+### Visualization of categorical predictors
+One of the peculiar checks for categorical features is that of cardinality.
+Before visualizing the categorical variables, it is worth noting that such visualizations 
+are usually more insightful
+and appropriate when the categorical variable is of a low cardinality. By this, predictors with
+high cardinality are first identified and visualization is done on low cardinal predictors. 
+Preprocessing of predictors with High cardinality will be done separately after visualization.
+Checking for high cardinality is implemented as follows.
+
+"""
+#%%
+
+categ_var =['father_in_hse', 'mother_in_hse', 'sex','attend_school', 'highest_edu']
+
+def get_unique_values(data: pd.DataFrame, variable: str):
+    num_values = data[variable].nunique()
+    print(f'{variable} has {num_values} unique values')
+    
+    
+
+for cat_var in categ_var:
+    get_unique_values(data=marital_status_df, variable=cat_var)   
+
+
+"""
+From the assessment of high cardinality, all variables with the exception of highest 
+education level are of low cardinality. Highest education level has 14 unique categories 
+for which techniques can be explored to reduce the categories. While there are a number 
+of ways to reduce cardinality, it is always important to analyze the values and employ 
+domain knowledge to recategorize value as the first approach whenever possible. This can 
+also be done for father_in_house and mother_in_hse with 4 categories each to explore 
+possibility of reducing categories.
+For this, all unique values are viewed as follows
+
+
+"""
+ #%%
+
+for i in marital_status_df['highest_edu'].unique():
+    print(i)
+
+"""
+
+From the values, one could deduced that high cardinality for this vaiable was as 
+a result of data quality issues high disaggregation of educational level. 
+
+First, lets deal the data quality issues. It is deduced that there is "Don't Know" as 
+a category separate from nan as missing value. When the respondent does not know 
+their eductaional level, data is not capture for hence it is essentially the same as 
+missing value (nan). The category "None" means that the respondent has never been to school 
+and that is a legit data point when should be kept. With this deduction, the data point 
+of highest education with "Don't know" category are replaced with missing values as follows.
+
+"""
+#%%
+
+marital_status_df[marital_status_df['highest_edu'] == 'None']['highest_edu']
+
+#%%
+
+marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu']=='Don?t know', np.nan, 
+                                            marital_status_df['highest_edu']
+                                            )
+
+for i in marital_status_df['highest_edu'].unique():
+    print(i)
+    
+
+#%%
+"""
+The next issue to tackle to reduce cardinality for highest educational level is to undo the 
+high scale of the data and make it more granular by aggregating levels. Indeed, this is a 
+common approach to handling high cardinal ordinal variable. For the Ghanaian educational 
+system, Kindergarten, Primary and JSS/JHS are all different levels with even more sub-classes for 
+each. Nonetheless, the performance of a student at the end of this phase of education is 
+evaluated at the National level in what is known as the Basic Education Certificate Examination (BECE).
+Middle school was also formerly a level of education that will at best be regard at present to 
+be part of basic education. 
+Using this knowledge, Kindergarten, Primary, JSS/JHS and Middle can be conveniently and appropriately 
+reclassified as "basic education". This is implemented as follows;
+
+
+"""    
+
+#%%
+basic_edu = ["Kindergarten", "Primary", "JSS/JHS", "Middle"]
+
+marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(basic_edu), 'basic_edu', 
+                                            marital_status_df['highest_edu']
+                                            )
+
+for i in marital_status_df['highest_edu'].unique():
+    print(i)
+
+#%%
+"""
+Another set of categories that can be aggregated is SSS/SHS, Secondary, 
+
+
+
+
+"""
+
+
+
+
+#%%
+
+marital_status_df['highest_edu'].where()
+    
+#%%
+marital_status_df[marital_status_df['highest_edu'] == 'Don?t know'][['highest_edu', 'high_edu_none_replace']]
+
+
+#%%
+
+marital_status_df.drop(columns='high_edu_none_replace')
+#%%
 #### Visualizing the relationship between categorical features and marital status
 """
 The relationship between categorical predictors and marital status can be visualized using 
@@ -1111,7 +1230,6 @@ class CategoricalDataExplorer(object):
         print(graph)
 
 #%%
-categ_var =['father_in_hse', 'mother_in_hse', 'sex','attend_school', 'highest_edu']
      
 for var in categ_var:
     cat_explr = CategoricalDataExplorer(data=marital_status_df,
@@ -1209,8 +1327,10 @@ chosen as a machine learning algorithm to solve the problem.
 """
 ## Preprocessing data for machine learning
 Before the machine algorithm can be fed with data, it has to be in a format that it 
-consume without vomitting errors! For instance, machine learning algorithms typically,
-
+can consume without vomitting errors! For instance, machine learning algorithms typically,
+are unable to understand strings hence string data has to converted to numeric data type.
+Even numeric data also have their own preprocessing techniques that improves the 
+performance of the model in some cases.
 
 
 The preprocessing pipeline for predictors to be prepared for modeling is highlighted as follows
@@ -1224,7 +1344,10 @@ The preprocessing pipeline is implemented as follows:
 
 While several encoding strategies exist to transform categorical variable into 
 forms that machine learning models can understand, one hot encoding was used 
-in this task. In the absence of high cardinality predictor, one hot encoding does not introduce the challenge of exponential growth of dimension and its associated curse of dimensionality hence appropriate. The preprocessing pipeline is implemented as follows:  
+in this task. In the absence of high cardinality predictor, 
+one hot encoding does not introduce the challenge of exponential growth of dimension 
+and its associated curse of dimensionality hence appropriate. 
+The preprocessing pipeline is implemented as follows:  
 
 """
 
