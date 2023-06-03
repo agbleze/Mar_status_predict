@@ -1144,8 +1144,6 @@ Middle school was also formerly a level of education that will at best be regard
 be part of basic education. 
 Using this knowledge, Kindergarten, Primary, JSS/JHS and Middle can be conveniently and appropriately 
 reclassified as "basic education". This is implemented as follows;
-
-
 """    
 
 #%%
@@ -1155,32 +1153,74 @@ marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isi
                                             marital_status_df['highest_edu']
                                             )
 
+#%%
+"""
+Another set of categories that can be aggregated is SSS/SHS and Secondary.
+Both of these 
+can belong to secondary education as a single category. 
+
+"""
+#%%
+sec_edu = ["SSS/SHS", "Secondary"]
+
+marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(sec_edu), 'sec_edu', 
+                                            marital_status_df['highest_edu']
+                                            )
 for i in marital_status_df['highest_edu'].unique():
     print(i)
 
 #%%
 """
-Another set of categories that can be aggregated is SSS/SHS, Secondary, 
+The categories Polytechnic, University (Bachelor) and Unviersity (Post Graduate) are regarded 
+as tertiary education level in Ghana and can be categorized as such.
+"""
 
+#%%
+tert_edu = ["Polytechnic", "University (Bachelor)", "Unviersity (Post Graduate)"]
 
-
+marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(tert_edu), 'tert_edu', 
+                                            marital_status_df['highest_edu']
+                                            )
+#%%
+"""
+Teacher Training/Agric/ Nursing Cert can actually be regarded as a professional training 
+geared towards white color jobs and be merged with Professional. Voc/Tech/Comm in this 
+case can be regarded as professional training for blue color jobs hence a separate category.
 
 """
 
+#%%
 
+prof_edu = ["Teacher Training/Agric/ Nursing Cert", "Professional"]
+marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(prof_edu), 'prof_edu', 
+                                            marital_status_df['highest_edu']
+                                            )
+
+"""
+By understanding the study area's educational system, the cardinality of education level can 
+be meaningfully reduced. The resulting categories and number of data points in each is assessed
+as follows;
+
+"""
+#%%
+marital_status_df['highest_edu'].value_counts()
+
+#%%
+"""
+For predictors such as father_in_hse and mother_in_hse, the four categories can be recategorized 
+into 2 but will be left as default with the assumption that the extra categories will 
+offer some extra signals for the prediction. This can form part of the experimentation 
+with different feature sets to determine the best one for prediction.
+"""
 
 
 #%%
 
-marital_status_df['highest_edu'].where()
-    
-#%%
-marital_status_df[marital_status_df['highest_edu'] == 'Don?t know'][['highest_edu', 'high_edu_none_replace']]
+marital_status_df.drop(columns=['high_edu_none_replace', 'basic_edu', 
+                                 'sec_edu', 'tert_edu', 'prof_edu'
+                                ], inplace=True
+                       )
 
-
-#%%
-
-marital_status_df.drop(columns='high_edu_none_replace')
 #%%
 #### Visualizing the relationship between categorical features and marital status
 """
@@ -1233,9 +1273,9 @@ class CategoricalDataExplorer(object):
      
 for var in categ_var:
     cat_explr = CategoricalDataExplorer(data=marital_status_df,
-                            groupby_vars=['marital_status', var],
-                            vars_to_count=var
-                            )
+                                        groupby_vars=['marital_status', var],
+                                        vars_to_count=var
+                                        )
     cat_explr.count_total_per_group()
     cat_explr.plot_bar()
 
@@ -1346,10 +1386,205 @@ While several encoding strategies exist to transform categorical variable into
 forms that machine learning models can understand, one hot encoding was used 
 in this task. In the absence of high cardinality predictor, 
 one hot encoding does not introduce the challenge of exponential growth of dimension 
-and its associated curse of dimensionality hence appropriate. 
+and its associated curse of dimensionality hence appropriate. However, there is 
+still the risk of producing a sparse feature because several categorical predictors
+are present and may have their one-hot encoded data eventually add up.  
 The preprocessing pipeline is implemented as follows:  
 
 """
+#%%
+# put all variables to be used in the modelling into a namespace for easier use
+from argparse import Namespace
+args = Namespace(target_variable = 'marital_status_encode',
+                 selected_numeric_features = ['age_yrs_outlier_imputed'],
+                 categorical_features = ['father_in_hse', 'mother_in_hse', 'sex', 
+                                         'attend_school', 'highest_edu'
+                                        ], 
+                 predictors = ['father_in_hse', 'mother_in_hse', 'sex', 
+                               'attend_school','highest_edu', 'age_yrs_outlier_imputed'
+                               ]
+                )
+
+
+#%%
+
+"""
+### Create preprocessing pipeline
+
+After segmenting the variables into different groups and identifying the 
+required preprocessing techniques,
+a preprocessing pipeline is created to process them. This is implemented as follows.
+
+"""
+from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+ohe = OneHotEncoder(handle_unknown='ignore')
+scaler = StandardScaler()
+
+preprocess_pipeline =  ColumnTransformer([('scaler', 
+                                           scaler, args.selected_numeric_features
+                                           ),
+                                          ('ohe',ohe, args.categorical_features)
+                                          ], remainder='passthrough'
+                                        )
+
+
+
+#%%
+
+"""
+### Splitting into Training and Testing dataset
+
+Deciding on data splitting ratio for learning and evaluation is rather subjective. 
+For this task, 70% of the data is used for training and 30% for validation. 
+70% dataset will likely provide enough 
+data points to learn and derive as much insight from and 30% will still probably 
+be enough to evaluate the model on data points capturing enough of the 
+varying charateristerics that are unknown to the model. Whatever the case maybe,
+there is no rule of thumb on the proportion of data to use for training and testing.
+The splitting will be done using stratified sampling to ensure that 
+the the same proportion of the various categories of marital status is found 
+in both training and test set to prevent further biasing the unbalance data 
+in any of the sets.
+
+In order to gain an objective evaluation of the model, cross validation will be performed. 
+This means that the training dataset, will be further splitted during the training 
+process into train and validation set while running the algorithm. Cross validation 
+provide a more objective view on the true accuracy of the model.
+
+Before splitting the data, steps are taken to preprocess the target variable 
+by transforming them in the current string format to numeric. 
+"""
+
+#%%
+label_encoder = LabelEncoder()
+
+marital_status_df['marital_status_encode'] = label_encoder.fit_transform(marital_status_df['marital_status'])
+
+marital_status_df[['marital_status', 'marital_status_encode']]
+
+#%%
+marital_status_df['marital_status_encode'].value_counts()
+
+marital_status_df['marital_status'].value_counts()
+
+#%%
+"""
+### Deciding on evaluation metric 
+
+In deciding the evaluation metric for a classification task, two main criteria plays a major role.
+
+1. Is the data balanced?
+
+When dataset is balanced, evaluation metrics like accuracy can be trusted to reflect the 
+performance of the model across all categories being predicted. For an unbalanced dataset,
+accuracy is likely to downplay contributions of higher misclassification error in the minority class.
+In such instances where the reference class for which business is much more interested 
+in accurately prediction is the minority class, the decision on selecting an evaluation 
+metric may go in favour of a different metric such as precision, recall or F1-SCORE among others
+rather than accuracy.
+
+
+2. Is it a binary or multi-class problem?
+
+For a binary classification, the positive and negative class can be easily determined 
+which is not the case for multi-class classification. The metric used in binary classification 
+need to be extended in such as away that one class becomes the positive while others 
+become the negative in turns in order to compute the metric score.
+
+For this task where an unbalanced multi-class problem is faced, a number of options are 
+available to implement and in the process choose the right evaluation metric accordingly.
+
+The short-gun approach will be where we convert a complex problem into a simple one and then 
+use a simple solution. Such a technique could involve rephrasing the problem to solve. 
+In this case, instead of determining the marital status to be one of six classes, we 
+will convert the classes into binary to determine if an individual is in relationship or not.
+For the business problem at hand, this will work really well as for people interested in 
+going on a date, knowing whether your partner is already in a relationship is just enough
+and the extra details of whether it is a consensual union or marriage may be of little value. 
+This technique makes the problem simplier because converting from multi-class to binary increases 
+the chances on reducing class imbalance in most cases and it becomes easier to define 
+the reference class to be 1 of 2 and determine positive and negative cases hence reduces the 
+the computation required in the case of multi-class.
+ 
+
+ 
+The other approach is where the problem is left in its complex state and right away,
+complex solutions are sought. For this, the focus is on having a model that tackles 
+the problem at a higher resolution (more classes compared that of binary classification).
+More importantly, we are faced with filtering through multiple classes to identify which 
+of them is of utmost prediction priority for the business. To determine that, the question 
+is asked: 
+What is the business impact when the model does a poor job on predicting this class? 
+To what extent and how is a poor model performance likely to impact business goals?
+
+In case poor model performance is of no heighten risk or impact on business for any 
+particular class, then that is a sign that accuracy is likely to be a good model 
+evaluation metric to rightly reflect the business problem. On the other hand where 
+poor predictions for a particular class at the expense of other classes 
+has dire business effect, then the evaluation metric need to be chosen to optimize the 
+performance of the model in classifying that particular class. For such a case, precision
+could be the right evaluation metric where the aim will be increase the ability 
+of the model to correctly predict the postives of that class out of all positives 
+it predicts. Recall could also be a good metric identifying the correct positives 
+out of all actual positives. The harmonic mean of Precison and Recall will produce the F1-Score 
+as an alternative metric for an unbalanced data.
+
+Putting the questions into the context of this task, if the model wrongly predicts that a 
+partner is "Never married" while it turns out be that the person is actually married, there is 
+likely a higher risk of such a misclassification in that, someone will go on a date with a married 
+man / woman and get bursted creating a scene. Betterstill, engage in a romantic affair with 
+a married partner because the model wrongly predicted the partner was not married or a different 
+marriage staus that makes them seem like a "free agent". The consequence could be accusations of 
+cheating and divorce down the line and our business reputation could be dragged into the mess 
+with the accusation of triggering the process with wrong prediction. 
+This suggests that while at first glance, it appears 
+we may not have a particular interest in the accuracy of any particular class, the wider 
+task of managing business risk lkiely to be posed by machine learning requires a double check 
+of handling the worst case possible. In this case, "Married" class needs a laser focus 
+from the algorithm to optimize its prediction correctness on this class. When given a sample, 
+the algorithm should be able to correctly all the married individuals in the sample in order 
+to be seen as tailored for our problem. By this, Recall of Married class is potentially
+the most appropriate evaluation metric for this problem.
+
+Condering the reverse case of the model wrongly predicting that a partner is "Married" when they
+have never married or have a less committed status, the impact of such a misclassification 
+will be less compared to the former. At worst, if a partner goes as far as establishing 
+a romantic affair with a partner predicted to be married and later finds out they have actual 
+never married or separated, that could be a sweet discovery for the relationship in most cases.
+The problem here will be that such a misclassification could lead to missing out a potential 
+good date or relationship just because model ask a partner to stay off with a predicton of 
+partner being married. In the business context, this is a lesser risk to take and a blindspot 
+to entertain for the model while penalizing it to do a better job. In fact we could also have 
+f1-score with the aim of attaining the best of both worlds.
+
+Typically, deciding on the evaluation metric is not always a forgone conclusion. 
+Particularly for classification task with class imbalance extra efforts in relating 
+the business operations and goals with the machine learning solution is required 
+to choose appropriate metrics. This discussion shows the process of choosing an evaluation metric 
+that matters for problem.
+
+The evaluation metric for this task is decided to be Recall for Married class.
+
+
+
+
+"""
+#%%
+### Data splitting
+# create separate variable for target and predictors
+y = marital_status_df[args.target_variable]
+X = marital_status_df[args.predictors]
+
+# split inot train and test data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, 
+                                                    random_state=2023
+                                                    )
+
+
+
+
 
 
 
