@@ -1416,7 +1416,11 @@ required preprocessing techniques,
 a preprocessing pipeline is created to process them. This is implemented as follows.
 
 """
-from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
+
+#%%
+from sklearn.preprocessing import (StandardScaler, LabelEncoder, OneHotEncoder, 
+                                   OrdinalEncoder
+                                   )
 from sklearn.compose import ColumnTransformer
 
 ohe = OneHotEncoder(handle_unknown='ignore')
