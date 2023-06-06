@@ -1425,7 +1425,7 @@ from sklearn.compose import ColumnTransformer
 
 ohe = OneHotEncoder(handle_unknown='ignore')
 scaler = StandardScaler()
-
+ord_encode = OrdinalEncoder(categories=['None', 'basic_edu'])
 preprocess_pipeline =  ColumnTransformer([('scaler', 
                                            scaler, args.selected_numeric_features
                                            ),
