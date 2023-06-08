@@ -1575,10 +1575,33 @@ that matters for problem.
 
 The evaluation metric for this task is decided to be Recall for Married class.
 
-
+"""
 
 
 """
+### Define baseline model
+
+Modelling can be an iterative process in attempt to optimize and arrive at the best generalizable model. 
+The bear minimum that can be achieved in the absence exhaustive experimentation is to establish a baseline 
+that the model to be developed need to perform better than. The baseline model is meant to be naive 
+such that even in the absence of an ML model, stakeholders can apply such an algorithm as an 
+educated random guess. Once resources are being committed to developed a machine learning model, 
+any product from such efforts needs to have a better performance than the baseline model in order to be 
+business worthy.
+
+The baseline model in this case is defined and implemented as follows:
+
+"""
+
+#%%
+from sklearn.dummy import DummyClassifier
+
+
+
+
+
+
+
 #%%
 ### Data splitting
 # create separate variable for target and predictors
