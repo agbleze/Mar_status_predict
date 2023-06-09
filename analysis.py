@@ -492,7 +492,7 @@ type of analysis as follows.
 
 """
 #%%
-marital_status_df[['age_yrs', 'height', 'weight']].describe()
+marital_status_df[['age_yrs', 'height', 'weight', 'months_away_from_hse']].describe()
 
 #%%
 """
@@ -545,7 +545,7 @@ def plot_histogram(data: pd.DataFrame, variable_to_plot: str,
 
 # plot of quantitative predictor variables
 
-numeric_predictors = ['age_yrs', 'height', 'weight']
+numeric_predictors = ['age_yrs', 'height', 'weight', 'months_away_from_hse']
 
 
 for var in numeric_predictors:
@@ -952,6 +952,7 @@ difference. Kruskall Wallis is implemented as follows:
 
 """
 #%%
+import pingouin as pg
 class KruskallWallisTest(object):
     def __init__(self, data, group_var, variable):
         self.data = data
@@ -989,6 +990,7 @@ for var in numeric_predictors:
     print(f'{krus.compute_kruskall_wallis_test()}')
     print(f'{krus.effect_size}\n')
 
+#%%
 """
 The result of the kruskal wallis test shows that all the predictors analyzed 
 have a relationship with marital status based on the uncorrected p-value at 
@@ -1034,7 +1036,7 @@ a parametric method such as pearson are not met.
 """
 #%%
 
-spearman_corr_matrix = marital_status_df[['weight','height','age_yrs']].corr(method='spearman')
+spearman_corr_matrix = marital_status_df[['weight','height','age_yrs', 'months_away_from_hse']].corr(method='spearman')
 
 #%%
 import seaborn as sns
@@ -1088,6 +1090,7 @@ for cat_var in categ_var:
     get_unique_values(data=marital_status_df, variable=cat_var)   
 
 
+#%%
 """
 From the assessment of high cardinality, all variables with the exception of highest 
 education level are of low cardinality. Highest education level has 14 unique categories 
@@ -1096,7 +1099,19 @@ of ways to reduce cardinality, it is always important to analyze the values and 
 domain knowledge to recategorize value as the first approach whenever possible. This can 
 also be done for father_in_house and mother_in_hse with 4 categories each to explore 
 possibility of reducing categories.
-For this, all unique values are viewed as follows
+
+Worthy of note is that, the type of categorical variable also influences the 
+processing technique. Highest educational level is actual an ordernal categorical 
+variable given that there is an inherent ordering of your educational achievement.
+During preprocessing Ordinal encoding can be viewed as a more appropriate 
+preprocessing techinque for such a variable and for this there will be no need to 
+recategorize to handle cardinality. In fact whether to use ordinal encoding or 
+reduce cardinality and use one-hot encoding can be one of the many experimentation to 
+conduct to choose a better algorithm for perfomence. Both can also be implemeneted 
+and explored. 
+
+In this task, the strategy of reducing cardinality and using one-hot encoding is 
+demonstrated. For this, all unique values are viewed as follows
 
 
 """
@@ -1110,18 +1125,14 @@ for i in marital_status_df['highest_edu'].unique():
 From the values, one could deduced that high cardinality for this vaiable was as 
 a result of data quality issues high disaggregation of educational level. 
 
-First, lets deal the data quality issues. It is deduced that there is "Don't Know" as 
+First, lets deal with the data quality issues. It is deduced that there is "Don't Know" as 
 a category separate from nan as missing value. When the respondent does not know 
-their eductaional level, data is not capture for hence it is essentially the same as 
+their eductaional level, data is not captured hence it is essentially the same as 
 missing value (nan). The category "None" means that the respondent has never been to school 
-and that is a legit data point when should be kept. With this deduction, the data point 
+and that is a legit data point to be kept. With this deduction, the data point 
 of highest education with "Don't know" category are replaced with missing values as follows.
 
 """
-#%%
-
-marital_status_df[marital_status_df['highest_edu'] == 'None']['highest_edu']
-
 #%%
 
 marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu']=='Don?t know', np.nan, 
@@ -1135,7 +1146,7 @@ for i in marital_status_df['highest_edu'].unique():
 #%%
 """
 The next issue to tackle to reduce cardinality for highest educational level is to undo the 
-high scale of the data and make it more granular by aggregating levels. Indeed, this is a 
+high resolution of the data and make it more granular by aggregating levels. Indeed, this is a 
 common approach to handling high cardinal ordinal variable. For the Ghanaian educational 
 system, Kindergarten, Primary and JSS/JHS are all different levels with even more sub-classes for 
 each. Nonetheless, the performance of a student at the end of this phase of education is 
@@ -1166,8 +1177,8 @@ sec_edu = ["SSS/SHS", "Secondary"]
 marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(sec_edu), 'sec_edu', 
                                             marital_status_df['highest_edu']
                                             )
-for i in marital_status_df['highest_edu'].unique():
-    print(i)
+# for i in marital_status_df['highest_edu'].unique():
+#     print(i)
 
 #%%
 """
@@ -1213,13 +1224,6 @@ offer some extra signals for the prediction. This can form part of the experimen
 with different feature sets to determine the best one for prediction.
 """
 
-
-#%%
-
-marital_status_df.drop(columns=['high_edu_none_replace', 'basic_edu', 
-                                 'sec_edu', 'tert_edu', 'prof_edu'
-                                ], inplace=True
-                       )
 
 #%%
 #### Visualizing the relationship between categorical features and marital status
@@ -1438,6 +1442,21 @@ preprocess_pipeline =  ColumnTransformer([('scaler',
                                         )
 
 
+def apply_preprocess(predictor_data: pd.DataFrame, 
+                     preprocess_pipeline: ColumnTransformer, 
+                     preprocess_type: str = 'fit_transform'
+                     ):
+    preprocess_pipeline_obj = preprocess_pipeline
+    if preprocess_type == 'fit_transform':
+        sparse_obj = preprocess_pipeline_obj.fit_transform(predictor_data)
+        X_train_dense = sparse_obj.todense()
+        X_train_dense_array = np.asarray(X_train_dense)
+        return X_train_dense_array
+    elif preprocess_type == 'transform':
+        sparse_obj = preprocess_pipeline_obj.transform(predictor_data)
+        return np.asarray(sparse_obj.todense())
+
+        
 
 #%%
 
@@ -1577,7 +1596,46 @@ The evaluation metric for this task is decided to be Recall for Married class.
 
 """
 
+#%%
+#%%
+### Data splitting
+# create separate variable for target and predictors
+y = marital_status_df[args.target_variable]
+X = marital_status_df[args.predictors]
 
+# split inot train and test data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, 
+                                                    random_state=2023
+                                                    )
+
+
+#%%
+"""
+### Implementing the preprocessing pipeline
+
+The data to be passed to the model first goes through the preprocessing pipeline to be transformed 
+before the agorithm is applied to it. Worthy of note is that the preprocessing pipeline is 
+only fitted on the training data but used to transform both training and testing data.
+The pipeline is not fitted on the test data to prevent data leakage. This is implemented as follows.
+"""
+
+#%%
+
+# fit and transform train data
+X_train_prep = apply_preprocess(predictor_data=X_train, 
+                                preprocess_pipeline=preprocess_pipeline, 
+                                preprocess_type='fit_transform'
+                                )
+
+# use the fitted preprocess to transform test data
+X_test_prep = apply_preprocess(predictor_data=X_test, 
+                               preprocess_pipeline=preprocess_pipeline, 
+                               preprocess_type='transform'
+                               )
+
+
+
+#%%
 """
 ### Define baseline model
 
@@ -1595,23 +1653,21 @@ The baseline model in this case is defined and implemented as follows:
 
 #%%
 from sklearn.dummy import DummyClassifier
+from sklearn.metrics import classification_report
+
+
+dum_clf = DummyClassifier(startegy='most_frequent', random_state=2023)
+
+dum_clf.fit(X=X_train_prep, y=y_train)
+
+dum_y_pred = dum_clf.predict(X=X_test_prep)
+
+classification_report(y_true=y_test, y_pred=dum_y_pred)
 
 
 
 
 
-
-
-#%%
-### Data splitting
-# create separate variable for target and predictors
-y = marital_status_df[args.target_variable]
-X = marital_status_df[args.predictors]
-
-# split inot train and test data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, 
-                                                    random_state=2023
-                                                    )
 
 
 #%%
@@ -1675,7 +1731,7 @@ krus.effect_size
 
 
 #%%
-import pingouin as pg
+
 pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
 
 #%%
