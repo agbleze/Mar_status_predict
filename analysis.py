@@ -1674,14 +1674,6 @@ classification_report(y_true=y_test, y_pred=dum_y_pred)
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 
-
-
-
-
-
-
-
-
 #%%
 pg.anova(data=marital_status_df, dv='weight_outlier_imputed', between='marital_status')
        
