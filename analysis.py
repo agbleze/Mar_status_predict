@@ -1508,7 +1508,7 @@ When dataset is balanced, evaluation metrics like accuracy can be trusted to ref
 performance of the model across all categories being predicted. For an unbalanced dataset,
 accuracy is likely to downplay contributions of higher misclassification error in the minority class.
 In such instances where the reference class for which business is much more interested 
-in accurately prediction is the minority class, the decision on selecting an evaluation 
+in accurately predicting is the minority class, the decision on selecting an evaluation 
 metric may go in favour of a different metric such as precision, recall or F1-SCORE among others
 rather than accuracy.
 
