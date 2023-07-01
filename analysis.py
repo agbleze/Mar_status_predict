@@ -157,13 +157,13 @@ leading platform providers for dating services hence has a keen focus on continu
 One of such servces is aiding matches make better decisions on their potential partners before taking in-person dates and 
 establishing strong bonds. While openness is encouraged as the cornerstone of building trust among matches, not every platform 
 user provides the same amount of information. Helping bridge the gap and developing tools to provide such information has 
-make a solid business case so much so that we have have segmented users into different tiers with Pro users being provided 
+made a solid business case so much so that we have have segmented users into different tiers with Pro users being provided 
 the services of filling in the blanks on information that a match has not provided and is not required to do 
 so to start with. For this, intelligent tools are required for prediction.
 
 
 In providing such services, the most requested information by our users is to know the marital status of client. Given that 
-a platform user is not obliged to include their the marital status on the profile but have the option of asking their match 
+ platform users are not obliged to include their marital status on their profiles but have the option of asking their match 
 in person, many users leave-out such information yet consider knowing that of a partner important in deciding whether an in-person 
 date or serious dating should be considered. Driven by solving problems that are most important and whose solutions are most 
 requested by users, predicting the marital status of users is designated as a high priority task for which a demonstration of 
@@ -172,7 +172,7 @@ how to develop a working solution is provided in this post.
 
 The understanding gained from the problem statement as well as our background as data scientists informs our judgement that 
 a machine learning solution is required rather than beating information or confession out of our clients. Thus, the focus of 
-this discussion is on demonstration how to develop a machine learning solution for the given problem. 
+this discussion is on demonstrating how to develop a machine learning solution for the given problem. 
 
 As can be deduced already, we have different stakeholders and collaborators working together at different stages to devise 
 a solution. Identifying these stakeholders and partners is critical for the success of the project. In particular, this enables
@@ -1255,7 +1255,7 @@ class CategoricalDataExplorer(object):
         self.groupby_vars = groupby_vars
         self.vars_to_count = vars_to_count
     def count_total_per_group(self, agg_method: str = 'count'):
-        self.agg_data = (data.groupby(by=self.groupby_vars)
+        self.agg_data = (self.data.groupby(by=self.groupby_vars)
                                 [[self.vars_to_count]].agg(func=agg_method)
                                 #.rename_axis(columns={self.vars_to_count: 'total_count'})
                                 #.reset_index()
