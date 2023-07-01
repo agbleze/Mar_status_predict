@@ -1656,13 +1656,14 @@ from sklearn.dummy import DummyClassifier
 from sklearn.metrics import classification_report
 
 
-dum_clf = DummyClassifier(strategy='most_frequent', random_state=2023)
+dum_clf = DummyClassifier(strategy='uniform', random_state=2023)
 
 dum_clf.fit(X=X_train_prep, y=y_train)
 
 dum_y_pred = dum_clf.predict(X=X_test_prep)
 
-classification_report(y_true=y_test, y_pred=dum_y_pred)
+#%%
+print(classification_report(y_true=y_test, y_pred=dum_y_pred ))
 
 
 
