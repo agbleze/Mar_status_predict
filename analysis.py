@@ -1662,8 +1662,23 @@ dum_clf.fit(X=X_train_prep, y=y_train)
 
 dum_y_pred = dum_clf.predict(X=X_test_prep)
 
-#%%
+#%% evaluation of baseline model
 print(classification_report(y_true=y_test, y_pred=dum_y_pred ))
+
+#%%
+"""
+The baseline model produced a Recall for Married class as 0.38.
+
+"""
+
+
+
+#%%
+
+label_encoder.get_params()
+
+#%%
+label_encoder.classes_
 
 
 
