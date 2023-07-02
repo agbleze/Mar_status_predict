@@ -1683,14 +1683,27 @@ label_encoder.get_params()
 #%%
 label_encoder.classes_
 
+#%%
 
+"""
+### Developing model for Hit prediction -- HistGradientBoostingRegressor
+
+After defining the baseline model performance, the model pipeline is created 
+to be added to the preprocessing pipeline.
+The model pipeline is implemented below.
+
+
+"""
 
 #%%
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 
+#%%
 
+hgb_clf = HistGradientBoostingClassifier(loss='auto')
 
+hgb_clf.fit(X=X_train_prep, y=y_train)
 
 
 
