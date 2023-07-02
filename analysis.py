@@ -1668,6 +1668,9 @@ print(classification_report(y_true=y_test, y_pred=dum_y_pred ))
 #%%
 """
 The baseline model produced a Recall for Married class as 0.38.
+Thus, the model to be developed should be 
+capable of achieving a Recall for Married class higher than that in order to be deem 
+better and capable of adding business value.
 
 """
 
