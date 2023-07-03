@@ -1697,13 +1697,46 @@ The model pipeline is implemented below.
 
 #%%
 from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.model_selection import cross_validate
+
+
+
 
 
 #%%
 
 hgb_clf = HistGradientBoostingClassifier(loss='auto')
 
+#%%
 hgb_clf.fit(X=X_train_prep, y=y_train)
+
+
+#%%
+"""
+### Creating cross validation of model
+
+In fitting the model, cross validation approach with 20 folds is used which is 
+a more objective assessment of the model given that it is 
+fitted and evaluated on different training samples to gain a clearer understanding 
+of how the model will perform on unseen data. 'neg_root_mean_squared_error' is used 
+for scoring which is essentially the negative version of the define evaluation metric. 
+The performance evaluation is the mean of the cross validation.
+
+The actual selection of model is based on RMSE of test dataset.
+This is implemented below.
+
+"""
+
+#%% 
+
+hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep, y=y_train,verbose=3,
+                            scoring='recall',
+                            n_jobs=-1, return_estimator=True, cv=20,
+                            average="weighted"
+                            )
+
+
+
 
 
 
