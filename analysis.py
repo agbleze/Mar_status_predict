@@ -1729,6 +1729,10 @@ This is implemented below.
 
 #%% 
 
+from sklearn.metrics import make_scorer, recall_score, precision_score
+
+
+
 hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep, y=y_train,verbose=3,
                             scoring='recall',
                             n_jobs=-1, return_estimator=True, cv=20,
