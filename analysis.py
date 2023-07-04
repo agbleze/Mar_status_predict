@@ -1744,25 +1744,77 @@ This is implemented below.
 
 """
 
-#%% 
-
-
-
-#%%
-recall_metric = recall_score(average='weighted')
-
-#%%
-make_scorer(recall_score(average='weighted'))
-
 #%%
 
-hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep, y=y_train,verbose=3,
+hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep, 
+                            y=y_train,verbose=3,
                             scoring='recall_weighted',
-                            n_jobs=-1, return_estimator=True, cv=20,
+                            n_jobs=-1, cv=20,
                             )
 
 
 #%%
+
+#hgb_clf_cv.items()
+
+hgb_clf_cv_mean = hgb_clf_cv['test_score'].mean()
+
+print(f'20 fold Cross validation weighted Recall is {hgb_clf_cv_mean}')
+
+
+#%%
+"""
+The cross validation result of 20 folds shows a Recall of 0.78. 
+This is only a cross validatation of the model and now the model has to be fitted 
+and evaluated on the test set. The code is provided below.
+
+"""
+
+#%%
+
+hgb_clf.fit(X=X_train_prep, y=y_train)
+
+
+
+"""
+### Evaluation of Model on test set
+The classification report for training and test set is evaluated as follows
+
+"""
+print(f'Model training classification report below')
+print(classification_report(y_true=y_train, y_pred=hgb_clf.predict(X_train_prep) ))
+
+
+#%%
+
+print(f'Model testing classification report below')
+print(classification_report(y_true=y_test, y_pred=hgb_clf.predict(X_test_prep) ))
+
+
+#%%
+
+
+"""
+The result shows Recall for married class (encoded as 2) in training set to be 
+0.9 while that os test set is 0.89.
+
+
+of 181.358 and 248.171 for the test set RMSE. 
+The model performs better than the baseline model hence capable of 
+offering business value. As expected, the training set error is lower than the test set error. The difference between the training RMSE and test RMSE is relatively high which may suggest overfitting.
+
+In assessing the model, cross-validation evaluation is deem to be more representative of model's true performance and aids the hyperparameter optimization. Nonetheless, the test error is the main benchmark for evaluating the model to gain insight on how it performs on unseen data.
+
+Hyperparameter optimization of the model will not only improve its precision and performance but also better business value hence demonstrated as follows.
+
+"""
+
+#%%
+
+
+
+
+
 
 
 
