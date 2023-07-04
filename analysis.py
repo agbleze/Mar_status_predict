@@ -363,6 +363,14 @@ from scipy.stats import iqr, shapiro, chisquare
 import scipy.stats as stats
 import plotly.express as px
 from bioinfokit.analys import stat as infostat
+from sklearn.metrics import (accuracy_score,classification_report,
+                             roc_auc_score,precision_score,
+                             recall_score,roc_curve,
+                             balanced_accuracy_score, make_scorer,
+                             precision_recall_curve, f1_score,
+                            fbeta_score
+                             
+                             )
 
 #%%
 
@@ -1552,33 +1560,33 @@ evaluation metric to rightly reflect the business problem. On the other hand whe
 poor predictions for a particular class at the expense of other classes 
 has dire business effect, then the evaluation metric need to be chosen to optimize the 
 performance of the model in classifying that particular class. For such a case, precision
-could be the right evaluation metric where the aim will be increase the ability 
+could be the right evaluation metric where the aim will be to increase the ability 
 of the model to correctly predict the postives of that class out of all positives 
 it predicts. Recall could also be a good metric identifying the correct positives 
 out of all actual positives. The harmonic mean of Precison and Recall will produce the F1-Score 
 as an alternative metric for an unbalanced data.
 
 Putting the questions into the context of this task, if the model wrongly predicts that a 
-partner is "Never married" while it turns out be that the person is actually married, there is 
+partner is "Never married" while it turns out that the person is actually married, there is 
 likely a higher risk of such a misclassification in that, someone will go on a date with a married 
 man / woman and get bursted creating a scene. Betterstill, engage in a romantic affair with 
 a married partner because the model wrongly predicted the partner was not married or a different 
-marriage staus that makes them seem like a "free agent". The consequence could be accusations of 
+marriage status that makes them seem like a "free agent". The consequence could be accusations of 
 cheating and divorce down the line and our business reputation could be dragged into the mess 
 with the accusation of triggering the process with wrong prediction. 
 This suggests that while at first glance, it appears 
 we may not have a particular interest in the accuracy of any particular class, the wider 
-task of managing business risk lkiely to be posed by machine learning requires a double check 
+task of managing business risk likely to be posed by machine learning requires a double check 
 of handling the worst case possible. In this case, "Married" class needs a laser focus 
 from the algorithm to optimize its prediction correctness on this class. When given a sample, 
-the algorithm should be able to correctly all the married individuals in the sample in order 
+the algorithm should be able to correctly tell all the married individuals in the sample in order 
 to be seen as tailored for our problem. By this, Recall of Married class is potentially
 the most appropriate evaluation metric for this problem.
 
 Condering the reverse case of the model wrongly predicting that a partner is "Married" when they
 have never married or have a less committed status, the impact of such a misclassification 
 will be less compared to the former. At worst, if a partner goes as far as establishing 
-a romantic affair with a partner predicted to be married and later finds out they have actual 
+a romantic affair with a partner predicted to be married and later finds out they have actually 
 never married or separated, that could be a sweet discovery for the relationship in most cases.
 The problem here will be that such a misclassification could lead to missing out a potential 
 good date or relationship just because model ask a partner to stay off with a predicton of 
@@ -1665,9 +1673,18 @@ dum_y_pred = dum_clf.predict(X=X_test_prep)
 #%% evaluation of baseline model
 print(classification_report(y_true=y_test, y_pred=dum_y_pred ))
 
+
+#%% 
+
+
+recall_score(y_true=y_test, y_pred=dum_y_pred, average='weighted')
+
+
 #%%
 """
-The baseline model produced a Recall for Married class as 0.38.
+The baseline model produced a Recall for Married class as 0.35. This result 
+reflects a scenario where class imbalance was handled by weighting by class 
+sample size.
 Thus, the model to be developed should be 
 capable of achieving a Recall for Married class higher than that in order to be deem 
 better and capable of adding business value.
@@ -1729,15 +1746,24 @@ This is implemented below.
 
 #%% 
 
-from sklearn.metrics import make_scorer, recall_score, precision_score
 
 
+#%%
+recall_metric = recall_score(average='weighted')
+
+#%%
+make_scorer(recall_score(average='weighted'))
+
+#%%
 
 hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep, y=y_train,verbose=3,
-                            scoring='recall',
+                            scoring='recall_weighted',
                             n_jobs=-1, return_estimator=True, cv=20,
-                            average="weighted"
                             )
+
+
+#%%
+
 
 
 
@@ -1850,7 +1876,7 @@ from sklearn.metrics import (accuracy_score,classification_report,
                              recall_score,roc_curve,
                              balanced_accuracy_score
                              )
-#from sklearn.
+
 
 #%%
 
