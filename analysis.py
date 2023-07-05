@@ -345,12 +345,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import HistGradientBoostingClassifier,BaggingClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import (accuracy_score,classification_report,
                              roc_auc_score,precision_score,
                              recall_score,roc_curve,
                              balanced_accuracy_score
                              )
+
+from sklearn.model_selection import (train_test_split, 
+                                     RandomizedSearchCV,
+                                     cross_validate
+                                     )
 
 from plotnine import (ggplot, ggtitle, aes, geom_col, theme_dark, 
                       theme_light, scale_x_discrete,
@@ -1749,7 +1753,7 @@ This is implemented below.
 hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep, 
                             y=y_train,verbose=3,
                             scoring='recall_weighted',
-                            n_jobs=-1, cv=20,
+                            n_jobs=-1, cv=20, return_train_score=True
                             )
 
 
@@ -1757,14 +1761,18 @@ hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep,
 
 #hgb_clf_cv.items()
 
-hgb_clf_cv_mean = hgb_clf_cv['test_score'].mean()
+hgb_clf_testcv_mean = hgb_clf_cv['test_score'].mean()
+hgb_clf_traincv_mean = hgb_clf_cv['train_score'].mean()
 
-print(f'20 fold Cross validation weighted Recall is {hgb_clf_cv_mean}')
+
+print(f'20 fold Cross validation weighted Recall for trainset is {hgb_clf_traincv_mean}')
+print(f'20 fold Cross validation weighted Recall for testset is {hgb_clf_testcv_mean}')
 
 
 #%%
 """
-The cross validation result of 20 folds shows a Recall of 0.78. 
+The cross validation result of 20 folds shows a Recall of 0.78 and 0.79 for test and training 
+set respectively. 
 This is only a cross validatation of the model and now the model has to be fitted 
 and evaluated on the test set. The code is provided below.
 
@@ -1781,6 +1789,8 @@ hgb_clf.fit(X=X_train_prep, y=y_train)
 The classification report for training and test set is evaluated as follows
 
 """
+
+#%%
 print(f'Model training classification report below')
 print(classification_report(y_true=y_train, y_pred=hgb_clf.predict(X_train_prep) ))
 
@@ -1796,27 +1806,142 @@ print(classification_report(y_true=y_test, y_pred=hgb_clf.predict(X_test_prep) )
 
 """
 The result shows Recall for married class (encoded as 2) in training set to be 
-0.9 while that os test set is 0.89.
+0.9 while that of test set is 0.89. With the small difference between training and 
+testing set, overfitting is not present.
 
-
-of 181.358 and 248.171 for the test set RMSE. 
 The model performs better than the baseline model hence capable of 
-offering business value. As expected, the training set error is lower than the test set error. The difference between the training RMSE and test RMSE is relatively high which may suggest overfitting.
+offering business value. 
 
-In assessing the model, cross-validation evaluation is deem to be more representative of model's true performance and aids the hyperparameter optimization. Nonetheless, the test error is the main benchmark for evaluating the model to gain insight on how it performs on unseen data.
+In assessing the model, cross-validation evaluation is deem to be more representative 
+of model's true performance and hence used in the hyperparameter optimization. 
+Nonetheless, the test error is the main benchmark for evaluating the model to gain insight on 
+how it performs on unseen data.
 
-Hyperparameter optimization of the model will not only improve its precision and performance but also better business value hence demonstrated as follows.
+Hyperparameter optimization of the model will not only improve its precision and performance 
+but also better business value hence demonstrated as follows.
 
 """
 
 #%%
 
+"""
+#### Hyperparameter tuning with Random Grid Search
+
+The first model trained is doing a better job than random guess (suggested by the baseline model) hence partly 
+achieving the objective of the task. 
+Nonetheless, the aim is to correctly identify all Married users as much as possible to increase precision of prediction. 
 
 
+It is duely recognized that a different algorithm may achieve a better performance and this 
+indeed is often an explored option for achieving better predictions. This will be explored in the next post
+where we look at automating the modelling processes to explore multiple algorithms.
 
 
+Hyperparameter tuning can be undertaken using the grid search where a set of parameters is specified 
+and a search is made using various combinations or permutation to test which combination best improves the 
+evaluation metric.  
 
 
+Another approach is the Radomized grid search where a distribution is specified for numeric parameters 
+and the algorithm randomly selects the values of the hyperparameters within the range or condition 
+specified to optimize the model. The difference is that all possible combinations are used in grid 
+search while random search randomly choose some of the combination a number of times equal to the 
+value of n_iter argument specified. The model fitted with paramters randomly selected is evaluated on 
+the validation set.
+
+
+Random grid search is demonstrated as a strategy of improving model performance. 
+
+
+"""
+
+#%%
+
+hyperparameter_space = {
+                        #'n_estimators': np.random.randint(low=100, high=500, size=500),
+                        'max_depth': np.random.randint(low=5, high=15, size=10),
+                        'min_samples_leaf': np.random.randint(low=2, high=100, size=50),
+                        'learning_rate': np.random.uniform(low=0.1, high=1, size=10),
+                        'max_iter': np.random.randint(low=100, high=500, size=10),
+                         'max_leaf_nodes':  np.random.randint(low=2, high=50, size=50),
+                        #'l2_regularization': np.random.uniform(low=0.1, high=1, size=10),
+                        #'interaction_cst': ['pairwise', 'no_interaction']
+            }
+
+
+#%%
+
+hgb_random_search = RandomizedSearchCV(estimator=hgb_clf, #HistGradientBoostingClassifier(loss='auto'), 
+                                      param_distributions=hyperparameter_space,
+                                      n_iter=30,
+                                      cv=5,
+                                      refit=True,
+                                      return_train_score=True, 
+                                      n_jobs=-1,
+                                      random_state=2023,
+                                      scoring='recall_weighted'
+                                      )
+
+
+#%%
+
+hgb_random_search.fit(X=X_train_prep, y=y_train)
+
+#%%
+
+hgb_random_search.best_score_
+
+# The score of model after hyperparameter search is 0.779 for weighted recall.
+# In order to obtain a more objective evaluation of the hyperparameters 
+# selected for the model and make it comparable to the other model without hyperparameter 
+# optimization, a 20 fold cross-validation is done as follows:
+
+
+#%%
+hgb_random_search_20cv = cross_validate(estimator=hgb_random_search.best_estimator_,
+                                        X=X_train_prep,
+                                        y=y_train, verbose=3,
+                                        scoring='recall_weighted',
+                                        n_jobs=-1, cv=20, 
+                                        return_train_score=True
+                                        )
+
+
+#%%
+hgb_random_search_20cv['train_score'].mean()
+
+#%%
+hgb_random_search_20cv['test_score'].mean()
+
+#%%
+"""
+The 20 CV training recall score for the best hyperparameter model is 0.782619 
+and the test recall score is 0.779049. Compared to the model with default parameters,
+the best hyperparameter model achieved a negligible improvement. It is possible that 
+a better improvement may be achieve with a better design of hyperparameter 
+search space.
+
+The best hyperparameter model is evaluated on the training and test set as follows:
+"""
+
+ 
+
+#%%
+print('Training data classification report')
+print(classification_report(y_true=y_train, y_pred=hgb_random_search.predict(X=X_train_prep)))
+
+#%%
+print('Test data classification report')
+print(classification_report(y_true=y_test, y_pred=hgb_random_search.predict(X=X_test_prep)))
+
+#%%
+"""
+The recall for Married class is 0.90 and 0.89 for training and test set respectively 
+for the best hyperparameter model. Thus, improvement (for test set) in the model with default 
+parameters after hyperparameter search is negligible. 
+
+
+"""
 
 
 
@@ -1827,8 +1952,114 @@ Hyperparameter optimization of the model will not only improve its precision and
 
 
 #%%
-pg.anova(data=marital_status_df, dv='weight_outlier_imputed', between='marital_status')
-       
+hgb_random_search.cv_results_
+
+#%%
+
+hgb_random_search.classes_
+
+#%%
+
+
+
+
+#%%
+"""
+hgb_random_search.best_estimator_
+HistGradientBoostingClassifier(learning_rate=0.10452174269392, max_depth=11,
+                               max_iter=339, max_leaf_nodes=13,
+                               min_samples_leaf=53)
+
+"""
+#%%
+# Params
+# hgb_random_search.get_params()
+{'cv': 5,
+ 'error_score': nan,
+ 'estimator__categorical_features': None,
+ 'estimator__early_stopping': 'auto',
+ 'estimator__l2_regularization': 0.0,
+ 'estimator__learning_rate': 0.1,
+ 'estimator__loss': 'auto',
+ 'estimator__max_bins': 255,
+ 'estimator__max_depth': None,
+ 'estimator__max_iter': 100,
+ 'estimator__max_leaf_nodes': 31,
+ 'estimator__min_samples_leaf': 20,
+ 'estimator__monotonic_cst': None,
+ 'estimator__n_iter_no_change': 10,
+ 'estimator__random_state': None,
+ 'estimator__scoring': 'loss',
+ 'estimator__tol': 1e-07,
+ 'estimator__validation_fraction': 0.1,
+ 'estimator__verbose': 0,
+ 'estimator__warm_start': False,
+ 'estimator': HistGradientBoostingClassifier(),
+ 'n_iter': 30,
+ 'n_jobs': -1,
+ 'param_distributions': {'max_depth': array([10, 10, 14,  8,  9, 12, 14, 11, 13,  6]),
+  'min_samples_leaf': array([46, 99, 39, 32, 50, 59, 25, 42, 23, 84, 38, 77, 29, 25, 83, 47, 91,
+         50, 38, 14, 89, 20, 63, 48, 39,  6, 68,  4, 70, 54, 53, 57, 53, 99,
+         82, 78, 63, 20, 53,  9, 89, 76,  3, 61, 45, 79, 39, 33, 28, 29]),
+  'learning_rate': array([0.83373061, 0.92721999, 0.65057916, 0.13510969, 0.34344401,
+         0.10452174, 0.39235743, 0.63406806, 0.56309343, 0.59376001]),
+  'max_iter': array([232, 420, 131, 161, 194, 263, 380, 187, 339, 125]),
+  'max_leaf_nodes': array([49, 36,  2, 22, 13, 25,  9, 37, 13, 33, 21, 49, 21, 39, 15, 11,  8,
+         44,  4, 14,  4,  8, 15, 18, 35, 10, 45, 49, 10,  3, 30, 26, 46,  5,
+         19,  2, 18, 34, 45, 41, 25, 13,  4, 27, 30, 48, 12, 33, 14, 12])},
+ 'pre_dispatch': '2*n_jobs',
+ 'random_state': 2023,   
+ 'refit': True,
+'return_train_score': True,
+'scoring': 'recall_weighted',
+'verbose': 0}
+ 
+
+#%% 
+"""
+# hgb_random_search.get_params()
+{'cv': 5,
+'error_score': nan,
+'estimator__categorical_features': None,
+'estimator__early_stopping': 'auto',
+'estimator__l2_regularization': 0.0,
+'estimator__learning_rate': 0.1,
+'estimator__loss': 'auto',
+'estimator__max_bins': 255,
+'estimator__max_depth': None,
+'estimator__max_iter': 100,
+'estimator__max_leaf_nodes': 31,
+'estimator__min_samples_leaf': 20,
+'estimator__monotonic_cst': None,
+'estimator__n_iter_no_change': 10,
+'estimator__random_state': None,
+'estimator__scoring': 'loss',
+'estimator__tol': 1e-07,
+'estimator__validation_fraction': 0.1,
+'estimator__verbose': 0,
+'estimator__warm_start': False,
+'estimator': HistGradientBoostingClassifier(),
+'n_iter': 30,
+'n_jobs': -1,
+'param_distributions': {'max_depth': array([10, 10, 14,  8,  9, 12, 14, 11, 13,  6]),
+'min_samples_leaf': array([46, 99, 39, 32, 50, 59, 25, 42, 23, 84, 38, 77, 29, 25, 83, 47, 91,
+        50, 38, 14, 89, 20, 63, 48, 39,  6, 68,  4, 70, 54, 53, 57, 53, 99,
+        82, 78, 63, 20, 53,  9, 89, 76,  3, 61, 45, 79, 39, 33, 28, 29]),
+'learning_rate': array([0.83373061, 0.92721999, 0.65057916, 0.13510969, 0.34344401,
+        0.10452174, 0.39235743, 0.63406806, 0.56309343, 0.59376001]),
+'max_iter': array([232, 420, 131, 161, 194, 263, 380, 187, 339, 125]),
+'max_leaf_nodes': array([49, 36,  2, 22, 13, 25,  9, 37, 13, 33, 21, 49, 21, 39, 15, 11,  8,
+        44,  4, 14,  4,  8, 15, 18, 35, 10, 45, 49, 10,  3, 30, 26, 46,  5,
+        19,  2, 18, 34, 45, 41, 25, 13,  4, 27, 30, 48, 12, 33, 14, 12])},
+'pre_dispatch': '2*n_jobs',
+'random_state': 2023,
+'refit': True,
+'return_train_score': True,
+'scoring': 'recall_weighted',
+'verbose': 0}
+ 
+""" 
+    
     
 #%%
 
@@ -1840,64 +2071,6 @@ marital_status_df[['weight_outlier_imputed',
 
     
     
-#%%
-
-for var in ['weight_outlier_imputed', 'height_outlier_imputed', 'age_yrs_outlier_imputed']:
-    test_homogeneity(data=marital_status_df, target_var=var, predictor_var='marital_status')    
-
-
-#%%
-
-for var in ['weight_outlier_imputed', 'height_outlier_imputed', 'age_yrs_outlier_imputed']:
-    krus = KruskallWallisTest(data = marital_status_df, 
-                                group_var='marital_status', 
-                                variable=var
-                                )
-    print(var)
-    print(f'{krus.compute_kruskall_wallis_test()}')
-    print(f'{krus.effect_size}\n')
-
-
-#%%
-
-krus = KruskallWallisTest(data = marital_status_df, 
-                         group_var='marital_status', 
-                         variable='age_yrs_outlier_imputed'
-                        )
-    
-krus.compute_kruskall_wallis_test()
-krus.effect_size
-
-
-
-
-
-
-
-#%%
-
-pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
-
-#%%
-
-krus_res = pg.kruskal(data=marital_status_df, dv='weight', between='marital_status')
-
-
-# eta2[H] = (H - k + 1)/(n - k); where H is the value obtained in the Kruskal-Wallis test; k is the number of groups; n is the total number of observations.
-
-#%%
-
-k = marital_status_df['marital_status'].nunique()
-
-n = marital_status_df['weight'].count()
-
-#%%
-H = krus_res['H'][0]
-
-#%%
-
-(H -k + 1) / (n - k)
-
 #%%
 
 from sklearn.preprocessing import LabelEncoder
