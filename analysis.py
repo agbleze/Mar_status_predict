@@ -149,7 +149,7 @@ data_mar_only[['weight', 'Height', 'age_yrs']].info()
 
 
 #%%
-"""
+""" Addressing business problems: Implementation of machine learning solution - PART 1
 # Introduction - Problem statement
 
 DateRush Mate (hypothetical firm used to establish a business case for this data science project) aims to be one of the 
@@ -1147,11 +1147,11 @@ of highest education with "Don't know" category are replaced with missing values
 """
 #%%
 
-marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu']=='Don?t know', np.nan, 
+marital_status_df['highest_edu_recat'] = np.where(marital_status_df['highest_edu']=='Don?t know', np.nan, 
                                             marital_status_df['highest_edu']
                                             )
 
-for i in marital_status_df['highest_edu'].unique():
+for i in marital_status_df['highest_edu_recat'].unique():
     print(i)
     
 
@@ -1172,8 +1172,8 @@ reclassified as "basic education". This is implemented as follows;
 #%%
 basic_edu = ["Kindergarten", "Primary", "JSS/JHS", "Middle"]
 
-marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(basic_edu), 'basic_edu', 
-                                            marital_status_df['highest_edu']
+marital_status_df['highest_edu_recat'] = np.where(marital_status_df['highest_edu_recat'].isin(basic_edu), 'basic_edu', 
+                                            marital_status_df['highest_edu_recat']
                                             )
 
 #%%
@@ -1186,8 +1186,8 @@ can belong to secondary education as a single category.
 #%%
 sec_edu = ["SSS/SHS", "Secondary"]
 
-marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(sec_edu), 'sec_edu', 
-                                            marital_status_df['highest_edu']
+marital_status_df['highest_edu_recat'] = np.where(marital_status_df['highest_edu_recat'].isin(sec_edu), 'sec_edu', 
+                                            marital_status_df['highest_edu_recat']
                                             )
 # for i in marital_status_df['highest_edu'].unique():
 #     print(i)
@@ -1201,8 +1201,8 @@ as tertiary education level in Ghana and can be categorized as such.
 #%%
 tert_edu = ["Polytechnic", "University (Bachelor)", "Unviersity (Post Graduate)"]
 
-marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(tert_edu), 'tert_edu', 
-                                            marital_status_df['highest_edu']
+marital_status_df['highest_edu_recat'] = np.where(marital_status_df['highest_edu_recat'].isin(tert_edu), 'tert_edu', 
+                                            marital_status_df['highest_edu_recat']
                                             )
 #%%
 """
@@ -1215,8 +1215,8 @@ case can be regarded as professional training for blue color jobs hence a separa
 #%%
 
 prof_edu = ["Teacher Training/Agric/ Nursing Cert", "Professional"]
-marital_status_df['highest_edu'] = np.where(marital_status_df['highest_edu'].isin(prof_edu), 'prof_edu', 
-                                            marital_status_df['highest_edu']
+marital_status_df['highest_edu_recat'] = np.where(marital_status_df['highest_edu_recat'].isin(prof_edu), 'prof_edu', 
+                                            marital_status_df['highest_edu_recat']
                                             )
 
 """
@@ -1226,7 +1226,7 @@ as follows;
 
 """
 #%%
-marital_status_df['highest_edu'].value_counts()
+marital_status_df['highest_edu_recat'].value_counts()
 
 #%%
 """
@@ -1414,10 +1414,10 @@ from argparse import Namespace
 args = Namespace(target_variable = 'marital_status_encode',
                  selected_numeric_features = ['age_yrs_outlier_imputed'],
                  categorical_features = ['father_in_hse', 'mother_in_hse', 'sex', 
-                                         'attend_school', 'highest_edu'
+                                         'attend_school', 'highest_edu_recat'
                                         ], 
                  predictors = ['father_in_hse', 'mother_in_hse', 'sex', 
-                               'attend_school','highest_edu', 'age_yrs_outlier_imputed'
+                               'attend_school','highest_edu_recat', 'age_yrs_outlier_imputed'
                                ]
                 )
 
@@ -1720,10 +1720,6 @@ The model pipeline is implemented below.
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.model_selection import cross_validate
 
-
-
-
-
 #%%
 
 hgb_clf = HistGradientBoostingClassifier(loss='auto')
@@ -2007,12 +2003,124 @@ and test set respectively. Thus, there is no real imporvement using bagging.
 
 """
 
+
+
+#%%
+
+"""
+### Conclusion Potential measures to improve the model
+
+This task being the first of a series focused on the process of devising a machine learning 
+solution to a business problem. The process of understanding and conceptualizing the business 
+problem and data, devising the data mining strategy, data exploration and implementing machine 
+learning algorithm was discussed in this post. Future post will tackle how to automate the 
+machine learning process to explore several algorithms, moving from this exploratory approach 
+to production-ready model, deployment among others.
+
+For a highlight can be made of a few ways to improve the efficiency of the model;
+
+
+1. Use of alternative machine learning algorithms has a good chance of producing a better precision.
+
+
+2. Feature selection, engineering and augmentation of data with new variables
+
+3. Experiment with various preprocessing techniques including encoding techniques for categorical variables.
+This include treating highest education level variable as an ordinal variable. 
+Experimenting with different techniques of handling missing data 
+to discover which approach reliably produce a stable and optimized model can also be explored. 
+
+
+3. Tuning hyperparameters: The models developed can be further improved by experimenting 
+with hyperparameters to select combinations that improve Recall score for Married class. 
+A larger hyperparameter search space will enable choosing better hyperparameters that 
+improve the model's precision.
+
+
+"""
+
+
+
+
+
+
+
+#%% Experimenting with other categorical transformation techniques
+# Transform highest education as ordinal variable 
+
+edu_level = {'None': 1, 'basic_edu': 2, 
+             'sec_edu': 3, 'Professional': 4, 
+            'tert_edu': 5, np.nan: 0
+            }
+
+
+marital_status_df['highest_edu_ordinal'] = (marital_status_df['highest_edu_recat']
+                                            .replace(edu_level)
+                                            )
+
+
 #%%
 
 
 
+#%%
+
+marital_status_df['highest_edu'].unique()
 
 
+#%%
+
+categories=['None', 'basic_edu', 'sec_edu', 'Professional', 
+                                        'tert_edu'
+                                        ]
+
+#%%
+
+
+
+#%%
+ord_encode = OrdinalEncoder()
+
+#%%
+
+ord_encode.fit_transform(X=marital_status_df[['highest_edu', 'sex']])
+
+
+#%%
+ord_encode.fit_transform(marital_status_df[args.categorical_features], encoded_missing_value=-1)
+
+#%%
+
+marital_status_df.columns
+
+
+#%%
+
+marital_status_df[['highest_edu_recat', 'highest_edu_ordinal']]
+
+
+#%%
+ord_encode.fit(X=marital_status_df[['highest_edu']])
+
+
+['None', 'Kindergarten', 'Primary', 'JSS/JHS', 
+ 'Middle', 'Secondary', 'SSS/SHS' ]
+
+
+                                 9893
+                                 8280
+                                 5187
+                                  3195
+University (Bachelor)                   1104
+Teacher Training/Agric/ Nursing Cert     764
+Voc/Tech/Comm                            648
+Polytechnic                              478
+                                370
+Unviersity (Post Graduate)               193
+Professional                              93
+                                      85
+Don?t know                                70
+                 
 
 
 
