@@ -1943,10 +1943,70 @@ parameters after hyperparameter search is negligible.
 
 """
 
+#%%
+
+from sklearn.ensemble import BaggingClassifier
+
+#%% Use best parameters from tuned model for bagging 
+bagging = BaggingClassifier(
+    # HistGradientBoostingClassifier(learning_rate=0.10452174269392, max_depth=11,
+    #                                                                 max_iter=339, max_leaf_nodes=13,
+    #                                                                 min_samples_leaf=53
+    #                                                                 ),
+                           hgb_random_search.best_estimator_, 
+                            n_estimators=30,
+                            random_state=2023,
+                            n_jobs=-1
+                          )
+
+#%%
+bagging.fit(X=X_train_prep, y=y_train)
+
+#%%
+print(classification_report(y_true=y_train, y_pred=bagging.predict(X=X_train_prep)))
+
+#%%
+
+print(classification_report(y_true=y_test, y_pred=bagging.predict(X=X_test_prep)))
+
+#%%
+
+bagging_20cv = cross_validate(estimator=bagging, X=X_train_prep, y=y_train, 
+                                scoring='recall_weighted',
+                                cv=20, n_jobs=-1, return_train_score=True
+                                )
 
 
 
+#%%
 
+bagging_20cv['train_score'].mean()
+
+#%%
+
+bagging_20cv['test_score'].mean()
+
+
+#%%
+"""
+The 20 CV for bagging produce 0.7825644 and 0.779049 as recall score for training
+and test set respectively. Thus, there is no real imporvement using bagging.
+
+The bagged model is evaluated on train and test set without CV as follows:
+"""
+
+
+#%%
+bagging.estimator_
+
+#%%
+
+bagging_cv20 = cross_validate(estimator=bagging,
+                              X=X_train_prep, 
+                              y=y_train,
+                              cv=20, scoring='recall_weighted',
+                              n_jobs=-1
+                            )
 
 
 
