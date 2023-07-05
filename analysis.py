@@ -1962,12 +1962,25 @@ bagging = BaggingClassifier(
 #%%
 bagging.fit(X=X_train_prep, y=y_train)
 
-#%%
+#%% The bagged model is evaluated on train and test set without CV as follows:
 print(classification_report(y_true=y_train, y_pred=bagging.predict(X=X_train_prep)))
 
 #%%
 
 print(classification_report(y_true=y_test, y_pred=bagging.predict(X=X_test_prep)))
+
+#%%
+
+"""
+The bagged model achieved a Recall score for Married class as 0.91 and 0.90 
+for training and test set. By this the bagged model performed better than the 
+previous models for the test set marginally hence should be used.
+
+
+"""
+
+
+
 
 #%%
 
@@ -1992,8 +2005,16 @@ bagging_20cv['test_score'].mean()
 The 20 CV for bagging produce 0.7825644 and 0.779049 as recall score for training
 and test set respectively. Thus, there is no real imporvement using bagging.
 
-The bagged model is evaluated on train and test set without CV as follows:
 """
+
+#%%
+
+
+
+
+
+
+
 
 
 #%%
