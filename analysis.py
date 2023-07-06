@@ -973,9 +973,6 @@ in drawing conclusion, it has already been deduced the differences in weight,
 height and even age among marital status are not really huge. Hence, calculating 
 the effect size is very important in this instance to know the extent of the 
 difference. Kruskall Wallis is implemented as follows:
-
-
-
 """
 #%%
 import pingouin as pg
