@@ -1018,13 +1018,13 @@ for var in numeric_predictors:
 The result of the kruskal wallis test shows that all the predictors analyzed 
 have a relationship with marital status based on the uncorrected p-value at 
 5% significance level. The fact that the p-value being used is uncorrected for 
-mutliple hypothesis testing means that we are prone making a Type I error. 
+multiple hypothesis testing means that we are prone to making a Type I error. 
 
 What is of a greater interest is the strength of the relationship between 
 the predictors assessed and marital status. Age has an effect size of 0.67
-which a moderate effect while height ans weight has 0.05 and 0.14 respectively 
+which a moderate effect while height and weight has 0.05 and 0.14 respectively 
 to score a low effect. This actually corresponds to the bar graphs depicted earlier.
-You is noted that for greater difference in age is seen between various marital 
+It is noted that greater difference in age is seen between various marital 
 status in the bar graph hence a higher effect size and the difference seen in weight among 
 marital statuses on the bar graph is higher compared to that of height hence effect size being higher 
 for weight compared to height. A possible implication of this on model is that when age 
@@ -1037,7 +1037,7 @@ selected at the expense of weight and height.
 
 #%%
 
-# Correlation analysis: Determining multicollinearity
+## Correlation analysis: Determining multicollinearity
 """ 
 In selecting numeric predictors for modelling, there is the need to prevent duplication 
 of signal sources and redundant predictors need to be assessed and removed. A predictor 
