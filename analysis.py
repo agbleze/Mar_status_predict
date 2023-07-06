@@ -244,38 +244,54 @@ better than chance
 
 ## Search for Data for modelling - Identifying data with relevant features
 
-Data science projects start with data collection and for most business cases, data is usually provided by the business 
-instead of field data collection. Instances where data is not available requires usually an open source data as one of the 
-approaches to developed a model. In such cases, where we will still need to increase the sample size of the data and improve 
-the model in the future, focus is drawn to which of the features in the open source data can the business generate its own 
-data for. Using dataset with features for which data cannot be generated internal will come with an extra challenge and cost.
-Hence, even though several open-source data  may be available not all of them will be useful in case, there still need to 
-be used to meet business needs in the future. For example, if a data has blood group or HIV/AIDS status as one of the feature 
-and we can not generate data for that feature in our business in the future then we should not use that feature for modelling 
-to meet business needs. Features in dataset for modelling should be one that will be available in the future when new data 
+Data science projects start with data collection and for most business cases, 
+data is usually provided by the business instead of field data collection. 
+Instances where data is not available requires usually an open source data as one of the 
+approaches to developed a model. In cases where we need to increase the sample size 
+of the data and improve the model in the future with data gathered from the business as it expands, 
+focus is drawn to features in the open source data that the business can generate its own 
+data for. Using features for which data cannot be generated internally
+will come with an extra challenge and cost.
+Hence, even though several open-source data may be available, not all of them 
+will be useful in case they still need to 
+be used to meet business needs which are proprietory in the future. 
+
+For example, if a data has blood group or HIV/AIDS status as one of the feature 
+and we can not generate data for that feature in our business in the future then 
+we should not use that feature for modelling to meet business needs. 
+Features in dataset for modelling should be one that will be available in the future when new data 
 is available. This inform the search for dataset and features for developing the modelling.
 
 
-The dataset used for developing the machine learning model is the Ghana Living Standards Survey 7 (2016/2017). 
-The dataset can be downloaded from https://www2.statsghana.gov.gh/nada/index.php/catalog/97/study-description. 
-The dataset contains data on marital status and other features which are preselected to be explored for developing the model.
+The dataset used for developing the machine learning model is the 
+Ghana Living Standards Survey 7 (2016/2017). 
+The dataset can be downloaded from 
+https://www2.statsghana.gov.gh/nada/index.php/catalog/97/study-description. 
+The dataset contains data on marital status and other features which are 
+preselected to be explored for developing the model.
+
 
 
 ## Understanding the dataset / data collection method
 
-Before even starting the data exploration, it is critical that we familiarize ourselves with the metadata and 
-questionnaires to understand the various variables and their background. The files from which the variables were 
-extracted are mainly from g7sec1.sav, g7sec7j, and g7sec2. These files are found in the downloaded dataset are 
-identified to the relevant ones for this analysis. A review of the variables and meaning from these files is provided
-below. For each variable, the corresponding questions asked to collect the data is provided
+Before even starting the data exploration, it is critical that we 
+familiarize ourselves with the metadata and 
+questionnaires to understand the various variables and their background. 
+The files from which the variables were 
+extracted are named g7sec1.sav, g7sec7j, and g7sec2. These files are found in 
+the downloaded dataset and identified to be relevant for this project. 
+A review of the variables and their meaning from these files is provided
+below. For each variable, the corresponding questions asked to collect the 
+data is provided. Understanding the context of data collection is critical 
+to developing appropriate methods and procedures to use.
 
 • s1q2: sex of individual
 
 • s1q18:  'mother_in_hse'  <<  18 Does (NAME’S) mother live in this household?
 
-• s1q10: 'religion'  <<  What is (NAME’S) religious denomination?
+#• s1q10: 'religion'  <<  What is (NAME’S) religious denomination?
 
-• s7jq3: 'Height'  <<  Height (cm) of household member.
+#• s7jq3: 'Height'  <<  Height (cm) of household member.
 
 • s1q14:  'father_in_hse'   <<   Does (NAME’S) father live in this household?
 
@@ -299,13 +315,16 @@ below. For each variable, the corresponding questions asked to collect the data 
 
 ### Identifying and categorizing variables in the data
 
-The data type used to store a variable determines the typs of exploratory analysis, visualization and categorical machine 
-learning algorithm to use. Thus, the various variables are accessed based on that as follows:
+The data type used to store a variable determines the typs of 
+exploratory analysis, visualization and machine 
+learning algorithm to use. Thus, the data type of variables are 
+identified as follows:
 
 
 #### Target / Outcome variable
 
 • marital_status: Categorical
+
 
 #### Predictor / feature variables
 
@@ -329,54 +348,33 @@ learning algorithm to use. Thus, the various variables are accessed based on tha
 
 • sex: Categorical 
 
-Exploratory data analysis is organized to reflect the data types of the various variables as follows.
-
-Before proceeding with it, one cannot resist addressing a frequently asked question concerning 
-when it should be undertaken. Yes, it is always the first stages but lets talk about the its focus.
-Very often the question is asked;
-
-Should the dataset be splitted before undertaking the exploratory analysis?
-
-Should exploratory analysis be undertaken on all the dataset or only the training dataset?
-
-Well, these two questions are driving at the same thing from the same angle.
-
-The answers are Yes and No with solid arguemnt for both so that it all truns down to be 
-where you see things from base on your situation. I will argue for each point to present 
-the views based on which you decide.
 
 
-Yes, the dataset should be splitted before exploratory analysis!
-Exploratory analysis should be based on only training data!
+Exploratory data analysis is organized to reflect the data types of 
+the various variables as follows.
 
+## Exploratory analysis
 
-
-
-
-
-# Exploratory analysis
-
-Exploratory data analysis is undertaken to investigate some of the assumptions that some machine learning algorithms 
-require. Among others, the type of underlying distribution that a variable is from, the relationsip between the 
-various variables and possible data transformation are explored at this stage. The insights gained from such analysis 
-is important for undertaking feature selection.
+Exploratory data analysis is undertaken to investigate some of the assumptions that 
+some machine learning algorithms require. Among others, the type of underlying 
+distribution that a variable is from, the relationsip between 
+various variables and possible data transformation are explored at this stage. 
+The insights gained from such analysis is important for undertaking feature selection.
 
 
 ### Data analysis 
 
-Given the various features preselected to be explored for modelling are in different files, 
-there is the need to combine data from the various files. For this, a common variable in the files is 
-required and "phid" variable is used for that purpose. Afterwards the variables are rename into something
+Given that the various features preselected to be explored for modelling are 
+in different files, there is the need to combine data from the various files. 
+For this, a common variable in the files is required and "phid" variable is used for 
+that purpose. Afterwards the variables are rename into something
 more understandable.
 
 ## Data Visualization: Relationship between variables
-
-
-
 """
 
 #%% import all modules
-
+"""First the modules required to the run the project are imported."""
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -415,7 +413,9 @@ from sklearn.metrics import (accuracy_score,classification_report,
 
 #%%
 
-#g7sec7 = pd.read_spss(path='g7sec7.sav')
+"""The data files are imported and merge to have all relevant features 
+as a single dataset as follows
+"""
 
 df_g7sec1 = pd.read_spss(path='g7sec1.sav')
 g7sec7j = pd.read_spss(path='g7sec7j.sav')  ###
@@ -440,6 +440,9 @@ data = data.merge(right=df_sel_sec2,
 
 
 # %%
+"""The columns are then renamed into readable names that are more intuitive as 
+follows:
+"""
 data = data.rename(columns={'s7jq1': 'weight',
                      's7jq0': 'measured_or_not',
                      's7jq2': 'measure_mode',
@@ -461,23 +464,24 @@ data = data.rename(columns={'s7jq1': 'weight',
 #%%
 
 """ 
-One of the factors that influences the kind of analysis that a variable can be subjected to is the 
+One of the factors that influences the kind of analysis that a variable 
+can be subjected to is the 
 data type. Hence the data type of the various variables are determined as follows
 
 """
 data_selected = data[['father_in_hse', 'mother_in_hse', 'months_away_from_hse',
                          'marital_status', 'sex', 'age_yrs', 'weight', 'height', 
                          'attend_school', 'highest_edu'
-                         ]]
+                    ]]
 
 data_selected.info()
 
 """ 
 From the above the data types of various variables are identified and it is deduced 
-that missing data is present in some of variables. However, given that the whole analysis
+that missing data is present in some variables. However, given that the whole analysis
 is based on the number of data points for target variable, only instances where 
 data is available for marital status will be considered and afterwards the presence of
-missing data will checked.
+missing data will be checked. This is implementated as follows:
 
 """
 
@@ -496,8 +500,8 @@ hence have to be handle as part of the data preparation process.
 The decision on how to handle missing data is equally influence by the percentage 
 of data that is missing given that imputing a high percentage of missing data introduces 
 a high amount of "artificial data" that can change the actual underlying distribution of 
-the phenomenon being studied. The percentage of data missing for each variable is 
-computed as follows.
+the phenomenon being studied. The percentage of missing data for each variable is 
+computed as follows:
 
 """
 #%%
@@ -517,7 +521,7 @@ for variable_name in marital_status_df.columns:
 #%% 
 """  
 From the analysis of missing data, highest education level has as much as 25.47% 
-missing data and weight and height variable has 20% missing data.  Arguably, this will 
+missing data, and weight and height variable has 20% missing data.  Arguably, this will 
 be a lot of data to impute and is likely to influence the underlying distribution with so many 
 "artificial data point" to be introduced when imputed. Other variables such as father_in_hse, 
 mother_in_hse, sex, age among others have less than 2% of data points missing hence can be imputed 
@@ -525,7 +529,6 @@ without altering the variable distribution much. The insights gained from the pr
 missing data available in the various variables will be used to determine how to handle or 
 preprocess missing data.
 
- 
 """ 
  
     
@@ -555,9 +558,10 @@ it.
 ### Visualizing the distribution of numeric variables
 
 """
-Some algorithms assume that predictors are normally distributed hence testing such the validity 
-of such an assumption in our dataset in undertaken. Visualization and statistical approaches are 
-used for. First, histogramm is used a visualization technique to determine if the distribution 
+Some algorithms assume that predictors are normally distributed hence a test 
+of the validity of such an assumption in our dataset is undertaken. 
+Visualization and statistical approaches are used for this. 
+First, histogramm is used as visualization technique to determine if the distribution 
 is normal.
 
 """
@@ -603,9 +607,9 @@ for var in numeric_predictors:
 
 """
 From the histogram, some level of skewness is present in all variables with age and weight 
-appearing to be slightly right skewed while hieght is left skewed. The skewness is not very 
-pronounce to say for certainty the distribution is not normally distributed as such conclusions
-could more subjective than objective. In such instances statistical test is needed.
+appearing to be slightly right skewed while height is left skewed. The skewness is not very 
+pronounce to say for certainty that the distribution is not normally distributed as such conclusions
+could be more subjective than objective. In such instances, statistical test is needed.
 It is possible to use boxcox transformation to transform them into normal variables 
 should that be needed for a linear algorithm.
 
@@ -614,11 +618,10 @@ should that be needed for a linear algorithm.
 ### Statistical analysis to determine normality of numeric predictor distributions
 """
 In addition to histogram visualization, Shapiro Wilk test is a statistical analysis that 
-can used to test the normality of numeric variable distribution. It tests the null hypothesis 
+can be used to test the normality of numeric variable distribution. It tests the null hypothesis 
 that the variable has a normal distribution. The Shapiro test is used as a more objective 
-approach to determining normality hence supplemnts histogram visualization. Shapiro test 
+approach to determining normality hence supplements histogram visualization. Shapiro test 
 is implemented as follows:
-
 """
 
 #%%
@@ -648,7 +651,7 @@ for var in numeric_predictors:
 ###   Visualizing outliers
 
 #### Boxplot to visualize outliers
-One of the exploratory analysis that can be on numeric variables is to visualize, detect and even 
+One of the exploratory analysis that can be done on numeric variables is to visualize, detect and even 
 treat outliers. Infact, some algorithms are impacted by the presence of outliers hence analyzed 
 to make an inform decision on which class of algorithm to choose from. 
 
@@ -679,7 +682,7 @@ for var in numeric_predictors:
     
 
 """
-While boxplot have been used to as a graphical method to identify and 
+While boxplot has been used as a graphical method to identify and 
 visualize outliers so far, a number of statistical techniques exist for 
 detecting outliers. 
 This includes using the standard deviation method whereby data points 
@@ -701,11 +704,11 @@ the upper limit and lower limit defined after estimating the interquantile range
 
 From the boxplots, height and weight have outliers above the upper limit and 
 below the lower limit while age has outliers only above the upper limit and this 
-decution needs to statistically established beyond visualization. To do this,
+deduction needs to be statistically established beyond visualization. To do this,
 a class is implemented to accept data and variable to be analyzed. The class 
 will have behaviours such as functions for identifying and getting outlier samples and 
-imputing outliers. Certain attributes such as upper 
-limit and lower limit used among others would also be worth accessing for perusal 
+imputing outliers. Certain attributes such as upper limit and 
+lower limit used among others would also be worth accessing for perusal 
 by the user. This is implemented below.
 """
 
@@ -761,15 +764,18 @@ for var in numeric_predictors:
 
 #%%
 """
-From the results of implementing the Outlier class, it is evident that outliers are no more 
-present of identifying and treating them.
+From the results of implementing the Outlier class, it is 
+evident that outliers are no more present after identifying and treating them.
+
 """
     
         
 #%%    
-## Feature selection for numeric variables    
-### Visualizing relationship between numberic variables and target variable
+## Feature selection for numeric variables: Visualizing relationship between numberic variables and target variable
+
 """
+Feature selection can be done using both visualization and statistical technique.
+First, visualization is used for feature selection. 
 Bar plot can be used to visualize how numeric predictors such as age varies among the 
 various categories of marriage status (target variable) on the average. This technique 
 enables gaining an insight into the relevance of a predictor to predicting marriage status.
@@ -830,7 +836,7 @@ Generally, marked difference in the average predictor value between
 categories of the target variable suggests that the predictor is likely to 
 be a good discriminator between target variable categories hence a strong 
 relationship exist making the predictor relevant for the modelling experiment.
-The contrary where the difference is not significant, then the relationship between 
+The contrary where the difference is not significant suggests the relationship between 
 the target and predictor is weak hence all categories of the target variable are 
 receiving similar signals from the predictor making the predictor not a relevant 
 variable for modelling.
@@ -864,31 +870,18 @@ statistical methods are used to determine that.
 
 ### Feature selection: Is locale a relevant predictor of hits 
 
-A factor that is considered in determining whether a categorical variable such as locale is a relevant 
-predictor is the determination of variance of hits between the various categories of locale. By this, when 
-hits significantly varies between the various categories of locale, it is likely to be a statistically 
-significant predictor of hits. This notions applies to other categorical predictors such as
-'agent_id', 'locale', 'day_of_week' and 'traffic_type'. For high cardinality predictors such as 'agent_id',
-'entry_page' and 'path_id_set', it better to first 
-treat them and reduce the classes to a manageable few before applying relevant statistical test.
-
-
 In determining which statistical test to use, the assumptions required were tested to determine 
 whether a parametric or non-parametric method of statistical test was appropriate. 
 A parametric method such as Student t-test requires the data to be normally distributed and variance 
-to be homogeneous for the various categories present in the predictor. 
+to be homogeneous. 
 When these assumptions are not captured by the data then a non-parametric method is appropriately used.
 
-
-Both visualization and statistical methods are used to verify these assumptions. For a categorical 
-variable, Boxplot is a good graphical technique to visulaize how hits varies within the various categories.
-This is then supplemented with a levene test and bartlett test to statistically verify that variance 
-depicted in by boxplot is indeed homogeneous. Barlett and levene method determines whether groups have homogeneous variance and levene is non-parametric method. 
-
-
-The discussion is implemented in code for all low cardinal variables starting with locale as follows.
-
-
+Both visualization and statistical methods are used to verify these assumptions. 
+Boxplot is a good graphical technique to visulaize homogeneity and is 
+supplemented with a levene and bartlett test to statistically verify whether variance 
+depicted by boxplot is indeed homogeneous. 
+Barlett and levene method determines whether groups have homogeneous variance
+and levene is non-parametric method. 
 
 """
 
@@ -921,24 +914,8 @@ boxplot(data_to_plot=marital_status_df, x_colname='marital_status', y_colname='a
 #%%
 
 """
-From the boxplot of hits distribution among locales, there appears to be difference in how 
-hits varies among the various locales and some data points are arguably outliers. 
-A statistical test is undertaken to determine if hits in homogenous among the 
-varous groups. Such a statistical test is premised on a hypothesis which is framed as 
-follows: 
-
-
-Null Hypothesis (H0): There is no statistically significant difference in variance of hits 
-            between categories of a categorical predictor (locale)
-
-Alternative Hypothesis (H1): There is statistically significant difference in variance of hits
-            between categories of a categorical predictor (locale)
-            
-            
-For all hypothesis test of homogeneity, this framework is assummed for each categorical predictor.
-
-Both Levene test and Bartlett test are used to check homogeneity and implemented as follows:
-
+Both Levene test and Bartlett test are used to check
+homogeneity and implemented as follows:
 """ 
  
     
@@ -993,7 +970,7 @@ all, a non-parametric method will be used to test if various marital status
 have equal age, weight, and height. With marital status having more than 2 
 categories, Kruskall Wallis will be used. While the p-value will be critical 
 in drawing conclusion, it has already been deduced the differences in weight, 
-height and even age among marital status are not really huge. Hence, the calculating 
+height and even age among marital status are not really huge. Hence, calculating 
 the effect size is very important in this instance to know the extent of the 
 difference. Kruskall Wallis is implemented as follows:
 
