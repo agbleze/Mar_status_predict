@@ -149,63 +149,100 @@ data_mar_only[['weight', 'Height', 'age_yrs']].info()
 
 
 #%%
-""" Addressing business problems: Implementation of machine learning solution - PART 1
+""" Addressing business problems: Implementation of end-to-end machine learning solution - PART 1
+
+This post is part of a series that demonstrates how to develop machine learning solutions for business 
+problems. This post will lay the ground for further work by detailing in an exploratory manner,
+the process of devising business problem statement, develop a framework that translates it into 
+a data science project as well as the implementation.
+
+
+
 # Introduction - Problem statement
 
-DateRush Mate (hypothetical firm used to establish a business case for this data science project) aims to be one of the 
-leading platform providers for dating services hence has a keen focus on continuous improvement of their products. 
-One of such servces is aiding matches make better decisions on their potential partners before taking in-person dates and 
-establishing strong bonds. While openness is encouraged as the cornerstone of building trust among matches, not every platform 
-user provides the same amount of information. Helping bridge the gap and developing tools to provide such information has 
-made a solid business case so much so that we have have segmented users into different tiers with Pro users being provided 
+DateRush Mate (hypothetical firm used to establish a business case for this data science project) 
+aims to be one of the leading platform providers for dating services 
+hence has a keen focus on continuous improvement of their products. 
+One of such servces is aiding date matches make better decisions on 
+their potential partners before taking in-person dates and 
+establishing strong bonds. While openness is encouraged as the cornerstone 
+of building trust among date matches (people who have swipe right and want to date), not every platform 
+user provides the same amount of information. Helping bridge the gap 
+and developing tools to provide such information has become a solid business case 
+so much so that we have segmented users into different tiers with Pro users being provided 
 the services of filling in the blanks on information that a match has not provided and is not required to do 
-so to start with. For this, intelligent tools are required for prediction.
+so. For this, intelligent tools are required for prediction.
 
 
-In providing such services, the most requested information by our users is to know the marital status of client. Given that 
- platform users are not obliged to include their marital status on their profiles but have the option of asking their match 
-in person, many users leave-out such information yet consider knowing that of a partner important in deciding whether an in-person 
-date or serious dating should be considered. Driven by solving problems that are most important and whose solutions are most 
-requested by users, predicting the marital status of users is designated as a high priority task for which a demonstration of 
+In providing such services, the most requested information by our users is 
+to know the marital status of a potential date partner or match. Given that 
+platform users are not obliged to include their marital status on their profiles, 
+many users leave-out such information. Date matches however consider knowing the 
+marital status of a partner important in deciding whether an in-person 
+date or serious dating should be considered. Driven by solving problems that are 
+most important and whose solutions are most requested by users, predicting the 
+marital status of users is designated as a high priority task for which a demonstration of 
 how to develop a working solution is provided in this post. 
 
 
-The understanding gained from the problem statement as well as our background as data scientists informs our judgement that 
-a machine learning solution is required rather than beating information or confession out of our clients. Thus, the focus of 
+The understanding gained from the problem statement as well as our background 
+as data scientists informs our judgement that a machine learning solution is required 
+rather than beating information or confession out of our clients. Thus, the focus of 
 this discussion is on demonstrating how to develop a machine learning solution for the given problem. 
 
-As can be deduced already, we have different stakeholders and collaborators working together at different stages to devise 
-a solution. Identifying these stakeholders and partners is critical for the success of the project. In particular, this enables
-defining clear cut-out deliverables and requirements upon which all parties can determine success status for the project. 
-The stakeholders for this project are identified to be product owner and date counsellors whose services are 
-requested by some users after matching and proceeding for serious relationship. The collaborators are the data scientist and 
-Machine Learning Engineer. The most discernible difference between the stakeholders which also poses a challenge to resolve is 
-the fact that they have different technical backgrounds. By this, the end-users of the product are non-technical audience 
-who need the easiest way to use the solutions without any coding required while the Data Scientist will write codes for which he/she 
-can explain the logic to the non-technical audience when the need arises.
 
-In response to providing such medium for capturing the project as a snapshot for reference among all stakeholders, a problem 
-design framework is used to capture the problem statement and project for that matter. For this the Situation Complication Question 
-Answer (SCQA) is used to capture the problem statement as a snapshot. This allows for easy communication of the project to 
+
+As can be deduced already, we have different stakeholders and collaborators 
+working together at different stages to devise a solution. 
+Identifying these stakeholders and partners is critical for the success of the project. 
+In particular, this enables defining clear cut-out deliverables and requirements 
+upon which all parties can determine success status for the project. 
+The stakeholders for this project are identified to be product owner and 
+date counsellors whose services are 
+requested by some users after matching and proceeding for serious relationship. 
+The collaborators are the data scientist and Machine Learning Engineer. 
+The most discernible difference between the stakeholders which also poses a challenge to resolve is 
+the fact that they have different technical backgrounds. By this, 
+the end-users of the product are non-technical audience who need the easiest way 
+to use the solutions without any coding required while the Data Scientist 
+will write codes for which he/she can explain the logic to the non-technical 
+audience when the need arises.
+The Machine Learning Engineer then translates the code into a production ready 
+artifacts that can be deployed and served for applications to consume. The various 
+personas will dominate the different series of this post to be made. Whatever the 
+case may be, there need to be a common source of truth and reference point for 
+all stakeholders to refer to for better understanding.
+ 
+
+
+In response to providing such medium for capturing the project as a 
+snapshot for reference among all stakeholders, a problem 
+design framework is used to encapsulate the problem statement and project for that matter. 
+For this, Situation Complication Question Answer (SCQA) is used to represent 
+the problem statement as a snapshot. This allows for easy communication of the project to 
 non-technical users. The SCQA is depicted below;
 
 
-## Research Question 
 
-(i) How do we identify a dataset with features that we can collect data for on our plantform for developing an accurate model?
+## Research Questions 
 
-(ii) How do we leverage available data to predict marital status of people?
+(i) How do we identify a dataset with relevant features that be used 
+for developing an accurate model for our plantform ?
+
+(ii) How do we leverage available data to accurately predict marital 
+status of people better than random chance?
 
 
 ## Research Objective
 
-(i) To identify open source data with features for predicting marital status
+(i) To identify open source data with relevant features for predicting marital status
 
-(ii) To develop a machine learning model for predicting marital status
+(ii) To develop a machine learning model for predicting marital status 
+better than chance
 
  
 
-## Search for Data for modelling
+## Search for Data for modelling - Identifying data with relevant features
 
 Data science projects start with data collection and for most business cases, data is usually provided by the business 
 instead of field data collection. Instances where data is not available requires usually an open source data as one of the 
