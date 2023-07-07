@@ -1041,25 +1041,27 @@ selected at the expense of weight and height.
 """ 
 In selecting numeric predictors for modelling, there is the need to prevent duplication 
 of signal sources and redundant predictors need to be assessed and removed. A predictor 
-is expected to provide a unique signal that contribute to making predictions. The problem 
+is expected to provide a unique signal that contributes to making predictions. The problem 
 with including redundant predictors in the model is that it becomes unstable, unnecassarily 
-complex and even overfit the training data. 
-Strong correlation between predictors
+complex and even overfit the training data. Strong correlation between predictors
 implies the predictors are supplying similar information to the algorithm.
-Ever undertaking a regression analysis and 
-released the coefficients of the predictors changes whenever a new predictor is added or removed
-from the model? Chances are that some of the predictors are corelated. 
+Ever undertaken a regression analysis and released the coefficients of
+the predictors changes whenever a new predictor is added or removed
+from the model? Chances are that some of the predictors are strongly correlated. 
 Multicollinearity is assessed to determine whether some of the numeric predictors are strongly 
-correlated and if that is the case, for each correlated predictors, one one of them is 
+correlated. For each strongly correlated predictors, one of them is 
 selected for modelling.
 
-Correlation analysis is undertaken on the numeric predictors to 
+Correlation analysis is undertaken on numeric predictors to 
 check for multicollinearity. Spearman method was used because the assumptions for 
 a parametric method such as pearson are not met. 
 """
 #%%
 
-spearman_corr_matrix = marital_status_df[['weight','height','age_yrs', 'months_away_from_hse']].corr(method='spearman')
+spearman_corr_matrix = (marital_status_df[['weight','height','age_yrs', 
+                                          'months_away_from_hse'
+                                          ]].corr(method='spearman')
+                        )
 
 #%%
 import seaborn as sns
@@ -1068,8 +1070,10 @@ mask = np.zeros_like(spearman_corr_matrix)
 mask[np.triu_indices_from(mask)] = True
 
 # visualize correlation matrix
-sns.heatmap(spearman_corr_matrix, mask=mask, cmap=sns.color_palette("GnBu_d"), 
-            square=True, linewidths=.5, cbar_kws={"shrink": .5}
+sns.heatmap(spearman_corr_matrix, mask=mask, 
+            cmap=sns.color_palette("GnBu_d"), 
+            square=True, linewidths=.5, 
+            cbar_kws={"shrink": .5}
             )
 plt.show()
 
@@ -1080,8 +1084,9 @@ the various predictors hence multicollinearity is absent.
 
 Based on all the analysis undertaken, age is selected as a predictor for modelling. 
 Weight and height are not selected because they are less relevant for predicting 
-marital status based on the bar plot. Even though the kruskall Wallis suggests the they are 
-reletaed to marital status, the effect size are low and correspond to deduction from the 
+marital status based on the bar plot. Even though the kruskall Wallis result 
+suggests the they are reletaed to marital status, the effect size are 
+low and correspond to deduction from the 
 bar plot visualization that they are not a good dsicriminator of marital status.
  
 """
@@ -1091,17 +1096,20 @@ bar plot visualization that they are not a good dsicriminator of marital status.
 """
 ### Visualization of categorical predictors
 One of the peculiar checks for categorical features is that of cardinality.
-Before visualizing the categorical variables, it is worth noting that such visualizations 
-are usually more insightful
-and appropriate when the categorical variable is of a low cardinality. By this, predictors with
-high cardinality are first identified and visualization is done on low cardinal predictors. 
-Preprocessing of predictors with High cardinality will be done separately after visualization.
+Before visualizing the categorical variables, it is worth 
+noting that such visualizations are usually more insightful
+and appropriate when the categorical variable is of a low cardinality. 
+By this, predictors with high cardinality are first identified and 
+visualization is done on low cardinal predictors. Preprocessing of 
+predictors with High cardinality will be done separately after visualization.
 Checking for high cardinality is implemented as follows.
 
 """
 #%%
 
-categ_var =['father_in_hse', 'mother_in_hse', 'sex','attend_school', 'highest_edu']
+categ_var =['father_in_hse', 'mother_in_hse', 
+            'sex','attend_school', 'highest_edu'
+            ]
 
 def get_unique_values(data: pd.DataFrame, variable: str):
     num_values = data[variable].nunique()
