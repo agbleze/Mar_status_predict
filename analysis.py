@@ -1559,7 +1559,7 @@ rather than accuracy.
 
 For a binary classification, the positive and negative class can be easily determined 
 which is not the case for multi-class classification. The metric used in binary classification 
-need to be extended in such as away that one class becomes the positive while others 
+need to be extended in such away that one class becomes the positive while others 
 become the negative in turns in order to compute the metric score.
 
 For this task where an unbalanced multi-class problem is faced, a number of options are 
@@ -1581,19 +1581,23 @@ the computation required in the case of multi-class.
  
 The other approach is where the problem is left in its complex state and right away,
 complex solutions are sought. For this, the focus is on having a model that tackles 
-the problem at a higher resolution (more classes compared that of binary classification).
+the problem at a higher resolution (more classes compared to that of binary classification).
 More importantly, we are faced with filtering through multiple classes to identify which 
-of them is of utmost prediction priority for the business. To determine that, the question 
-is asked: 
+of them is of utmost prediction priority for the business. 
+
+
+To determine that, the question is asked: 
+
 What is the business impact when the model does a poor job on predicting this class? 
+
 To what extent and how is a poor model performance likely to impact business goals?
 
 In case poor model performance is of no heighten risk or impact on business for any 
-particular class, then that is a sign that accuracy is likely to be a good model 
+particular target class, then that is a sign that accuracy is likely to be a good model 
 evaluation metric to rightly reflect the business problem. On the other hand where 
-poor predictions for a particular class at the expense of other classes 
+poor predictions for a particular target class at the expense of other classes 
 has dire business effect, then the evaluation metric need to be chosen to optimize the 
-performance of the model in classifying that particular class. For such a case, precision
+performance of the model in classifying that particular target class. For such a case, precision
 could be the right evaluation metric where the aim will be to increase the ability 
 of the model to correctly predict the postives of that class out of all positives 
 it predicts. Recall could also be a good metric identifying the correct positives 
@@ -1609,15 +1613,16 @@ marriage status that makes them seem like a "free agent". The consequence could 
 cheating and divorce down the line and our business reputation could be dragged into the mess 
 with the accusation of triggering the process with wrong prediction. 
 This suggests that while at first glance, it appears 
-we may not have a particular interest in the accuracy of any particular class, the wider 
+we may not have a particular interest in the prediction accuracy of any particular class, the wider 
 task of managing business risk likely to be posed by machine learning requires a double check 
 of handling the worst case possible. In this case, "Married" class needs a laser focus 
 from the algorithm to optimize its prediction correctness on this class. When given a sample, 
 the algorithm should be able to correctly tell all the married individuals in the sample in order 
-to be seen as tailored for our problem. By this, Recall of Married class is potentially
+to be seen as tailored to our problem. By this, Recall of Married class is potentially
 the most appropriate evaluation metric for this problem.
 
-Condering the reverse case of the model wrongly predicting that a partner is "Married" when they
+
+Considering the reverse case of the model wrongly predicting that a partner is "Married" when they
 have never married or have a less committed status, the impact of such a misclassification 
 will be less compared to the former. At worst, if a partner goes as far as establishing 
 a romantic affair with a partner predicted to be married and later finds out they have actually 
@@ -1627,6 +1632,7 @@ good date or relationship just because model ask a partner to stay off with a pr
 partner being married. In the business context, this is a lesser risk to take and a blindspot 
 to entertain for the model while penalizing it to do a better job. In fact we could also have 
 f1-score with the aim of attaining the best of both worlds.
+
 
 Typically, deciding on the evaluation metric is not always a forgone conclusion. 
 Particularly for classification task with class imbalance extra efforts in relating 
