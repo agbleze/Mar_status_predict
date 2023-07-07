@@ -1886,6 +1886,8 @@ the validation set.
 
 
 Random grid search is demonstrated as a strategy of improving model performance. 
+Frist the hyperparameter search space is defined and then the algorithm is optimized by 
+choosing values within the search space.
 
 
 """
@@ -1898,9 +1900,6 @@ hyperparameter_space = {'max_depth': np.random.randint(low=5, high=15, size=10),
                         'max_iter': np.random.randint(low=100, high=500, size=10),
                          'max_leaf_nodes':  np.random.randint(low=2, high=50, size=50)
                          }
-
-
-#%%
 
 hgb_random_search = RandomizedSearchCV(estimator=hgb_clf, #HistGradientBoostingClassifier(loss='auto'), 
                                       param_distributions=hyperparameter_space,
@@ -1915,6 +1914,7 @@ hgb_random_search = RandomizedSearchCV(estimator=hgb_clf, #HistGradientBoostingC
 
 
 #%%
+# Fitting model for hyperparameter optimization
 
 hgb_random_search.fit(X=X_train_prep, y=y_train)
 
