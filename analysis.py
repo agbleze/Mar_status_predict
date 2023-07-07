@@ -1630,17 +1630,20 @@ never married or separated, that could be a sweet discovery for the relationship
 The problem here will be that such a misclassification could lead to missing out a potential 
 good date or relationship just because model ask a partner to stay off with a predicton of 
 partner being married. In the business context, this is a lesser risk to take and a blindspot 
-to entertain for the model while penalizing it to do a better job. In fact we could also have 
+to entertain for the model while penalizing it to do a better job. In fact, we could also have 
 f1-score with the aim of attaining the best of both worlds.
 
 
 Typically, deciding on the evaluation metric is not always a forgone conclusion. 
-Particularly for classification task with class imbalance extra efforts in relating 
+Particularly for classification task with class imbalance, extra efforts in relating 
 the business operations and goals with the machine learning solution is required 
 to choose appropriate metrics. This discussion shows the process of choosing an evaluation metric 
 that matters for problem.
 
 The evaluation metric for this task is decided to be Recall for Married class.
+
+After deciding on the evaluation metric, data splitting is undertaken so that 
+they can evaluated separately after modeling.
 
 """
 
@@ -1661,10 +1664,14 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3,
 """
 ### Implementing the preprocessing pipeline
 
-The data to be passed to the model first goes through the preprocessing pipeline to be transformed 
-before the agorithm is applied to it. Worthy of note is that the preprocessing pipeline is 
-only fitted on the training data but used to transform both training and testing data.
-The pipeline is not fitted on the test data to prevent data leakage. This is implemented as follows.
+The data to be passed to the model first goes through the 
+preprocessing pipeline to be transformed before the algorithm 
+is applied to it. Worthy to note is that,
+the preprocessing pipeline is only fitted on the training data but
+used to transform both training and testing data.
+The pipeline is not fitted on the test data to prevent data leakage. 
+
+This is implemented as follows.
 """
 
 #%%
@@ -1687,9 +1694,13 @@ X_test_prep = apply_preprocess(predictor_data=X_test,
 """
 ### Define baseline model
 
-Modelling can be an iterative process in attempt to optimize and arrive at the best generalizable model. 
-The bear minimum that can be achieved in the absence exhaustive experimentation is to establish a baseline 
-that the model to be developed need to perform better than. The baseline model is meant to be naive 
+Modeling can be an iterative process in attempt to optimize and 
+arrive at the best generalizable model. 
+The bear minimum that can be achieved in the absence of 
+exhaustive experimentation is to establish a baseline 
+that the model to be developed need to perform better than. 
+
+The baseline model is meant to be naive 
 such that even in the absence of an ML model, stakeholders can apply such an algorithm as an 
 educated random guess. Once resources are being committed to developed a machine learning model, 
 any product from such efforts needs to have a better performance than the baseline model in order to be 
@@ -1710,13 +1721,11 @@ dum_clf.fit(X=X_train_prep, y=y_train)
 
 dum_y_pred = dum_clf.predict(X=X_test_prep)
 
-#%% evaluation of baseline model
+#%% Evaluation of baseline model
 print(classification_report(y_true=y_test, y_pred=dum_y_pred ))
 
 
 #%% 
-
-
 recall_score(y_true=y_test, y_pred=dum_y_pred, average='weighted')
 
 
@@ -1724,31 +1733,22 @@ recall_score(y_true=y_test, y_pred=dum_y_pred, average='weighted')
 """
 The baseline model produced a Recall for Married class as 0.35. This result 
 reflects a scenario where class imbalance was handled by weighting by class 
-sample size.
-Thus, the model to be developed should be 
-capable of achieving a Recall for Married class higher than that in order to be deem 
+sample size whihc is signified by 'average=weighted'.
+Thus, the model to be developed should be capable of achieving 
+a Recall for Married class higher than that in order to be deem 
 better and capable of adding business value.
 
 """
 
-
-
-#%%
-
-label_encoder.get_params()
-
-#%%
-label_encoder.classes_
-
 #%%
 
 """
-### Developing model for Hit prediction -- HistGradientBoostingRegressor
+### Developing model for marital status prediction prediction -- HistGradientBoostingClassifier
 
-After defining the baseline model performance, the model pipeline is created 
-to be added to the preprocessing pipeline.
-The model pipeline is implemented below.
+After defining the baseline model performance, the actual machine learning 
+algorithmn chosen is trained. First, the model is trained using the default parameters.
 
+The model training is implemented below:
 
 """
 
@@ -1766,32 +1766,33 @@ hgb_clf.fit(X=X_train_prep, y=y_train)
 
 #%%
 """
-### Creating cross validation of model
+### Cross validation of model
 
-In fitting the model, cross validation approach with 20 folds is used which is 
+In fitting and evaluating the model, cross validation approach with 20 folds is used which is 
 a more objective assessment of the model given that it is 
-fitted and evaluated on different training samples to gain a clearer understanding 
-of how the model will perform on unseen data. 'neg_root_mean_squared_error' is used 
-for scoring which is essentially the negative version of the define evaluation metric. 
-The performance evaluation is the mean of the cross validation.
+fitted and evaluated on different samples to gain a clearer understanding 
+of how the model will perform on different unseen data with different distribution. 
 
-The actual selection of model is based on RMSE of test dataset.
+Weighted recall is used for scoring and the performance evaluation is the mean of the cross validation.
+
+The actual selection of model is based on Recall for married class in the test dataset.
+
 This is implemented below.
-
 """
 
 #%%
 
-hgb_clf_cv = cross_validate(estimator=hgb_clf, X=X_train_prep, 
+hgb_clf_cv = cross_validate(estimator=hgb_clf, 
+                            X=X_train_prep, 
                             y=y_train,verbose=3,
                             scoring='recall_weighted',
-                            n_jobs=-1, cv=20, return_train_score=True
+                            n_jobs=-1, cv=20, 
+                            return_train_score=True
                             )
 
 
 #%%
-
-#hgb_clf_cv.items()
+# Model performance based on cross validation is as follows:
 
 hgb_clf_testcv_mean = hgb_clf_cv['test_score'].mean()
 hgb_clf_traincv_mean = hgb_clf_cv['train_score'].mean()
@@ -1814,10 +1815,9 @@ and evaluated on the test set. The code is provided below.
 
 hgb_clf.fit(X=X_train_prep, y=y_train)
 
-
-
 """
-### Evaluation of Model on test set
+### Evaluation of Model with default parameters on training and test set
+
 The classification report for training and test set is evaluated as follows
 
 """
@@ -1849,9 +1849,9 @@ of model's true performance and hence used in the hyperparameter optimization.
 Nonetheless, the test error is the main benchmark for evaluating the model to gain insight on 
 how it performs on unseen data.
 
-Hyperparameter optimization of the model will not only improve its precision and performance 
-but also better business value hence demonstrated as follows.
-
+One of the major options available in improving model performance is hyperparameter tuning. 
+This is diffcult values for the model parameters are used with the aim 
+of achieving better performance hence implemented.
 """
 
 #%%
@@ -1859,13 +1859,16 @@ but also better business value hence demonstrated as follows.
 """
 #### Hyperparameter tuning with Random Grid Search
 
-The first model trained is doing a better job than random guess (suggested by the baseline model) hence partly 
+The first model trained is doing a better job than random guess 
+(suggested by the baseline model) hence partly 
 achieving the objective of the task. 
-Nonetheless, the aim is to correctly identify all Married users as much as possible to increase precision of prediction. 
+Nonetheless, the aim is to correctly identify all Married users 
+as much as possible to increase model performance. 
 
 
-It is duely recognized that a different algorithm may achieve a better performance and this 
-indeed is often an explored option for achieving better predictions. This will be explored in the next post
+It is duely recognized that a different algorithm may 
+achieve a better performance and this is often an explored option 
+for achieving better predictions. This will be explored in the next post
 where we look at automating the modelling processes to explore multiple algorithms.
 
 
@@ -1889,16 +1892,12 @@ Random grid search is demonstrated as a strategy of improving model performance.
 
 #%%
 
-hyperparameter_space = {
-                        #'n_estimators': np.random.randint(low=100, high=500, size=500),
-                        'max_depth': np.random.randint(low=5, high=15, size=10),
+hyperparameter_space = {'max_depth': np.random.randint(low=5, high=15, size=10),
                         'min_samples_leaf': np.random.randint(low=2, high=100, size=50),
                         'learning_rate': np.random.uniform(low=0.1, high=1, size=10),
                         'max_iter': np.random.randint(low=100, high=500, size=10),
-                         'max_leaf_nodes':  np.random.randint(low=2, high=50, size=50),
-                        #'l2_regularization': np.random.uniform(low=0.1, high=1, size=10),
-                        #'interaction_cst': ['pairwise', 'no_interaction']
-            }
+                         'max_leaf_nodes':  np.random.randint(low=2, high=50, size=50)
+                         }
 
 
 #%%
