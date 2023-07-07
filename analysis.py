@@ -197,6 +197,7 @@ working together at different stages to devise a solution.
 Identifying these stakeholders and partners is critical for the success of the project. 
 In particular, this enables defining clear cut-out deliverables and requirements 
 upon which all parties can determine success status for the project. 
+
 The stakeholders for this project are identified to be product owner and 
 date counsellors whose services are 
 requested by some users after matching and proceeding for serious relationship. 
@@ -469,6 +470,8 @@ can be subjected to is the
 data type. Hence the data type of the various variables are determined as follows
 
 """
+
+#%%
 data_selected = data[['father_in_hse', 'mother_in_hse', 'months_away_from_hse',
                          'marital_status', 'sex', 'age_yrs', 'weight', 'height', 
                          'attend_school', 'highest_edu'
@@ -476,6 +479,7 @@ data_selected = data[['father_in_hse', 'mother_in_hse', 'months_away_from_hse',
 
 data_selected.info()
 
+#%%
 """ 
 From the above the data types of various variables are identified and it is deduced 
 that missing data is present in some variables. However, given that the whole analysis
@@ -491,7 +495,7 @@ marital_status_df = data_selected.dropna(subset='marital_status')
 
 marital_status_df.info()
 
-
+#%%
 """ 
 A key insight gained from the data after reducing it to only observations where marital 
 status is recorded is that most of the variables have missing data 
@@ -605,6 +609,7 @@ for var in numeric_predictors:
     plot_histogram(data=marital_status_df, variable_to_plot=var)
 
 
+#%%
 """
 From the histogram, some level of skewness is present in all variables with age and weight 
 appearing to be slightly right skewed while height is left skewed. The skewness is not very 
@@ -641,7 +646,8 @@ def compute_shapiro_normality_test(data: pd.DataFrame, variable_name: str,
     print(f"Shapiro Wilk test result of {variable_name}")
     print(shapiro_interprete)
     
-    
+
+#%%    
 for var in numeric_predictors:
     compute_shapiro_normality_test(data=marital_status_df, variable_name=var)
     
@@ -681,6 +687,7 @@ for var in numeric_predictors:
     make_boxplot(data=marital_status_df, variable_name=var)    
     
 
+#%%
 """
 While boxplot has been used as a graphical method to identify and 
 visualize outliers so far, a number of statistical techniques exist for 
@@ -830,7 +837,7 @@ for var in numeric_predictors:
             variable_to_plot='marital_status', y_colname=var
             )
 
-
+#%%
 """
 Generally, marked difference in the average predictor value between 
 categories of the target variable suggests that the predictor is likely to 
@@ -867,8 +874,6 @@ A significant difference suggests that the variable is a significant predictor o
 status hence have an influence that will improve the model. Univariate 
 statistical methods are used to determine that.
 
-
-### Feature selection: Is locale a relevant predictor of hits 
 
 In determining which statistical test to use, the assumptions required were tested to determine 
 whether a parametric or non-parametric method of statistical test was appropriate. 
@@ -946,10 +951,10 @@ def test_homogeneity(data: pd.DataFrame, target_var: str, predictor_var: str):
     levene_interprete = f'With a p-value of {levene_pval}, the Levene test suggests to: {levene_res} {sig_level} '
     
     # results are printed and not return but in case of production environment they will be return
-    print(f'Barlett test results of {predictor_var}')
+    print(f'Barlett test results of {target_var}')
     print(f'{bartlett_summary} \n')
     
-    print(f'Levene test results of {predictor_var}')
+    print(f'Levene test results of {target_var}')
     print(f'{levene_summary} \n')
     
     print(f'{bartlett_interprete} \n')
@@ -964,6 +969,7 @@ for var in numeric_predictors:
                      )
 
 
+#%%
 """
 Given that null hypotheisis of homogeneity of variance was rejected for 
 all, a non-parametric method will be used to test if various marital status 
@@ -1922,10 +1928,13 @@ hgb_random_search.fit(X=X_train_prep, y=y_train)
 
 hgb_random_search.best_score_
 
-# The score of model after hyperparameter search is 0.779 for weighted recall.
-# In order to obtain a more objective evaluation of the hyperparameters 
-# selected for the model and make it comparable to the other model without hyperparameter 
-# optimization, a 20 fold cross-validation is done as follows:
+"""
+The score of model after hyperparameter search is 0.779 for weighted recall.
+In order to obtain a more objective evaluation of the hyperparameters 
+selected for the model and make it comparable to the other model with default parameters 
+a 20 fold cross-validation is done as follows:
+
+"""
 
 
 #%%
@@ -1939,6 +1948,7 @@ hgb_random_search_20cv = cross_validate(estimator=hgb_random_search.best_estimat
 
 
 #%%
+# Evaluation of model with best hyperparameters chosen using 20 fold CV
 hgb_random_search_20cv['train_score'].mean()
 
 #%%
@@ -1958,6 +1968,8 @@ The best hyperparameter model is evaluated on the training and test set as follo
  
 
 #%%
+## Evaluating hyperparameter optimzed model on training and test set
+
 print('Training data classification report')
 print(classification_report(y_true=y_train, y_pred=hgb_random_search.predict(X=X_train_prep)))
 
@@ -1965,26 +1977,37 @@ print(classification_report(y_true=y_train, y_pred=hgb_random_search.predict(X=X
 print('Test data classification report')
 print(classification_report(y_true=y_test, y_pred=hgb_random_search.predict(X=X_test_prep)))
 
+
 #%%
 """
 The recall for Married class is 0.90 and 0.89 for training and test set respectively 
 for the best hyperparameter model. Thus, improvement (for test set) in the model with default 
-parameters after hyperparameter search is negligible. 
+parameters after hyperparameter search was achieved but negligible. 
 
 
 """
 
+"""
+### Bagging as an approach to improving model performance
+
+Bootstrap Aggregating (bagging) as a technique is used to reduce overfitting 
+and misclassification further.
+Bagging involves multiple random sampling with replacement and 
+for each sample fits HistGradientBoostingClassifier to produce 
+scores which are aggregated. As expected, this helps reduce 
+overfitting as more samples are fitted on by model hence more 
+stable to unseen data. 
+The class prediction from a bagging classifier is often based on majority vote 
+from all estimators fitted on various samples of the data.
+
+Bagging is implemented for the HistGradientBoosting Classifier as follows:
+"""
 #%%
 
 from sklearn.ensemble import BaggingClassifier
 
 #%% Use best parameters from tuned model for bagging 
-bagging = BaggingClassifier(
-    # HistGradientBoostingClassifier(learning_rate=0.10452174269392, max_depth=11,
-    #                                                                 max_iter=339, max_leaf_nodes=13,
-    #                                                                 min_samples_leaf=53
-    #                                                                 ),
-                           hgb_random_search.best_estimator_, 
+bagging = BaggingClassifier(hgb_random_search.best_estimator_, 
                             n_estimators=30,
                             random_state=2023,
                             n_jobs=-1
@@ -2007,12 +2030,8 @@ The bagged model achieved a Recall score for Married class as 0.91 and 0.90
 for training and test set. By this the bagged model performed better than the 
 previous models for the test set marginally hence should be used.
 
-
+A 20 fold cross-validation of the bagged model is implemented as follow
 """
-
-
-
-
 #%%
 
 bagging_20cv = cross_validate(estimator=bagging, X=X_train_prep, y=y_train, 
@@ -2023,7 +2042,6 @@ bagging_20cv = cross_validate(estimator=bagging, X=X_train_prep, y=y_train,
 
 
 #%%
-
 bagging_20cv['train_score'].mean()
 
 #%%
@@ -2034,7 +2052,7 @@ bagging_20cv['test_score'].mean()
 #%%
 """
 The 20 CV for bagging produce 0.7825644 and 0.779049 as recall score for training
-and test set respectively. Thus, there is no real imporvement using bagging.
+and test set respectively. Thus, there is limited improvement using bagging.
 
 """
 
@@ -2043,35 +2061,32 @@ and test set respectively. Thus, there is no real imporvement using bagging.
 #%%
 
 """
-### Conclusion Potential measures to improve the model
+### Conclusion - Potential measures to improve the model
 
-This task being the first of a series focused on the process of devising a machine learning 
+This task is the first of a series focused on the process of devising a machine learning 
 solution to a business problem. The process of understanding and conceptualizing the business 
 problem and data, devising the data mining strategy, data exploration and implementing machine 
 learning algorithm was discussed in this post. Future post will tackle how to automate the 
 machine learning process to explore several algorithms, moving from this exploratory approach 
 to production-ready model, deployment among others.
 
-For a highlight can be made of a few ways to improve the efficiency of the model;
+A highlight of a few ways to improve the efficiency of the model is provided as follows;
 
 
-1. Use of alternative machine learning algorithms has a good chance of producing a better precision.
+1. Use of alternative machine learning algorithms has a good chance of producing a better model performance.
 
 
 2. Feature selection, engineering and augmentation of data with new variables
 
 3. Experiment with various preprocessing techniques including encoding techniques for categorical variables.
-This include treating highest education level variable as an ordinal variable. 
+This include treating highest education level predictor as an ordinal variable. 
 Experimenting with different techniques of handling missing data 
 to discover which approach reliably produce a stable and optimized model can also be explored. 
 
-
-3. Tuning hyperparameters: The models developed can be further improved by experimenting 
+4. Tuning hyperparameters: The models developed can be further improved by experimenting 
 with hyperparameters to select combinations that improve Recall score for Married class. 
 A larger hyperparameter search space will enable choosing better hyperparameters that 
 improve the model's precision.
-
-
 """
 
 
