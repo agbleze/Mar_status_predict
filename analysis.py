@@ -1156,7 +1156,8 @@ demonstrated. For this, all unique values are viewed as follows
 
 for i in marital_status_df['highest_edu'].unique():
     print(i)
-
+    
+#%%
 """
 
 From the values, one could deduced that high cardinality for this vaiable was as 
@@ -1210,8 +1211,7 @@ marital_status_df['highest_edu_recat'] = np.where(marital_status_df['highest_edu
 #%%
 """
 Another set of categories that can be aggregated is SSS/SHS and Secondary.
-Both of these 
-can belong to secondary education as a single category. 
+Both of these can belong to secondary education as a single category. 
 
 """
 #%%
@@ -1317,8 +1317,10 @@ class CategoricalDataExplorer(object):
         print(graph)
 
 #%%
-     
-for var in categ_var:
+recateg_var =['father_in_hse', 'mother_in_hse', 
+            'sex','attend_school', 'highest_edu_recat'
+            ]     
+for var in recateg_var:
     cat_explr = CategoricalDataExplorer(data=marital_status_df,
                                         groupby_vars=['marital_status', var],
                                         vars_to_count=var
@@ -1367,7 +1369,7 @@ class ChisquaredComputer(object):
 
 
 #%%
-for var in categ_var:
+for var in recateg_var:
     chisquared = ChisquaredComputer(data=marital_status_df, 
                                     x_var=var, 
                                     y_var='marital_status'
@@ -1377,10 +1379,10 @@ for var in categ_var:
 
     chisquared.compute_chisquared_test_of_independence()
 
-
+#%%
 """
 From the chi square analysis, all the categorical varibles are relevant for modelling 
-hence selected
+hence selected.
 """
 
 #%%
@@ -1450,7 +1452,8 @@ args = Namespace(target_variable = 'marital_status_encode',
                                          'attend_school', 'highest_edu_recat'
                                         ], 
                  predictors = ['father_in_hse', 'mother_in_hse', 'sex', 
-                               'attend_school','highest_edu_recat', 'age_yrs_outlier_imputed'
+                               'attend_school','highest_edu_recat', 
+                               'age_yrs_outlier_imputed'
                                ]
                 )
 
@@ -1856,7 +1859,7 @@ Nonetheless, the test error is the main benchmark for evaluating the model to ga
 how it performs on unseen data.
 
 One of the major options available in improving model performance is hyperparameter tuning. 
-This is diffcult values for the model parameters are used with the aim 
+This is different values for the model parameters are used with the aim 
 of achieving better performance hence implemented.
 """
 
@@ -1892,7 +1895,7 @@ the validation set.
 
 
 Random grid search is demonstrated as a strategy of improving model performance. 
-Frist the hyperparameter search space is defined and then the algorithm is optimized by 
+First the hyperparameter search space is defined and then the algorithm is optimized by 
 choosing values within the search space.
 
 
